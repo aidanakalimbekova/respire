@@ -19,14 +19,14 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        db.collection("users")
-            .add(user)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
+//        db.collection("users")
+//            .add(user)
+//            .addOnSuccessListener { documentReference ->
+//                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.w(TAG, "Error adding document", e)
+//            }
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
