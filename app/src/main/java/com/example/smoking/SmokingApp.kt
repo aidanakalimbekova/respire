@@ -1,6 +1,10 @@
 package com.example.smoking
 
-import androidx.compose.foundation.background
+import android.app.Activity.RESULT_OK
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -8,19 +12,22 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Leaderboard
 import androidx.compose.material.icons.filled.Person
-
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
@@ -31,7 +38,14 @@ import com.example.smoking.ui.theme.home.HomeScreen
 import com.example.smoking.ui.theme.home.HomeViewModel
 import com.example.smoking.ui.theme.profile.ProfileScreen
 import com.example.smoking.ui.theme.quest.QuestScreen
+import com.example.smoking.ui.theme.signin.GoogleAuthUiClient
+import com.example.smoking.ui.theme.signin.SignInScreen
+import com.example.smoking.ui.theme.signin.SignInViewModel
 import com.example.smoking.ui.theme.statistics.StatisticsScreen
+import com.google.android.gms.auth.api.identity.Identity
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.coroutineContext
 
 
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val label: String) {
@@ -43,28 +57,16 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val label: 
 //@Preview
 @Composable
 fun SmokingApp() {
+
     SmokingTheme {
+
         val smokeNavController = rememberNavController()
-        Scaffold (modifier = Modifier.fillMaxSize(), bottomBar = {BottomNavigationBar(smokeNavController)}  ) {
+        Scaffold (containerColor = Color(0xFFF9F9F9),modifier = Modifier.fillMaxSize(), bottomBar = {BottomNavigationBar(smokeNavController)}  ) {
             NavHost(
                 navController = smokeNavController,
-                startDestination = BottomNavItem.Home.route,
+                startDestination = "home",
                 Modifier.padding(it)
             ) {
-//            navigation(startDestination = "login", route = "auth"){
-//                composable("login"){
-//
-//                    Button(onClick = {
-//                        smokeNavController.navigate(""){
-//                            popUpTo("auth"){inclusive=true}
-//                        }
-//                    }){
-//
-//                    }
-//
-//                }
-//                composable("register"){}
-//            }
 
                 composable(BottomNavItem.Home.route){
                     HomeScreen(viewModel = HomeViewModel())

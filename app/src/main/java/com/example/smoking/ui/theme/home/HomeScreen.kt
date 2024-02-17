@@ -2,6 +2,7 @@ package com.example.smoking.ui.theme.home
 
 import androidx.compose.ui.res.vectorResource
 import android.app.Activity
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.compose.animation.core.Animatable
@@ -76,7 +77,13 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.smoking.R
+import com.example.smoking.ui.theme.signin.GoogleAuthUiClient
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -85,19 +92,28 @@ import java.time.LocalDate
 fun HomeScreen(viewModel:HomeViewModel){
     val selectedDay by viewModel.selectedDay
     val systemUiController = rememberSystemUiController()
+    val context =  LocalContext.current
+
+    val auth = Firebase.auth
+    val curUser = auth.currentUser
+
     SideEffect {
         systemUiController.setStatusBarColor(
             color = Color(0XFFCDEFF3)
         )
     }
         Column(){
+            var name:String? = "j"
+            curUser?.run {
+                name = curUser.displayName
+            }
             Column (horizontalAlignment = Alignment.CenterHorizontally){
                 Column (Modifier.background(Color(0XFFCDEFF3))){
                     Row (verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Start, modifier = Modifier.padding(20.dp), )
                     {
                         Text("Hey, ", fontSize = 25.sp, textAlign = TextAlign.Start)
-                        Text("Rimma!", fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
+                        Text("$name", fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.Bottom,){
                             Icon(Icons.Filled.LocalFireDepartment, contentDescription =  "strike", tint = Color(0xFFFF5722) )
                             Text("5", fontSize = 20.sp, modifier = Modifier.padding(start = 4.dp))
@@ -107,7 +123,7 @@ fun HomeScreen(viewModel:HomeViewModel){
                 Calendar(selectedDay, { viewModel.selectTomorrow() },
                     { viewModel.selectYesterday() })
 
-                PersonalInfo()
+//                PersonalInfo()
             }
 
         }
@@ -164,6 +180,7 @@ fun PersonalInfo(){
 }
 @Composable
 fun Calendar(selectedDay:Time, onSelectTomorrow:() -> Unit, onSelectYesterday:() -> Unit ){
+
     Column{
         Column (){
             Box(){
