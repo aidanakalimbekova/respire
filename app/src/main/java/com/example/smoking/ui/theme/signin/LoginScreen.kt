@@ -47,13 +47,13 @@ fun LoginScreen(onClick:  () -> Unit, googleAuthUiClient: GoogleAuthUiClient){
                 "Sign in successful",
                 Toast.LENGTH_LONG
             ).show()
-            val firebaseAuth =  FirebaseAuth.getInstance()
-            val db = Firebase.firestore
-            val user = mapOf("email" to firebaseAuth.currentUser!!.email)
-            val userRef = db.collection("users")
-            val userid:String= firebaseAuth.currentUser!!.uid
-            userRef.document(userid).set(user).addOnSuccessListener { Log.d("int", "DocumentSnapshot successfully written!") }
-                .addOnFailureListener { e -> Log.w("int", "Error writing document", e) }
+//            val firebaseAuth =  FirebaseAuth.getInstance()
+//            val db = Firebase.firestore
+//            val user = mapOf("email" to firebaseAuth.currentUser!!.email)
+//            val userRef = db.collection("users")
+//            val userid:String= firebaseAuth.currentUser!!.uid
+//            userRef.document(userid).set(user).addOnSuccessListener { Log.d("int", "DocumentSnapshot successfully written!") }
+//                .addOnFailureListener { e -> Log.w("int", "Error writing document", e) }
             onClick()
             viewModel.resetState()
         }

@@ -13,7 +13,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
-    val db = Firebase.firestore
+
     val user = hashMapOf(
         "first" to "Ada",
         "last" to "Lovelace",

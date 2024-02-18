@@ -48,6 +48,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -90,7 +91,6 @@ import java.time.LocalDate
 //@Preview
 @Composable
 fun HomeScreen(viewModel:HomeViewModel){
-    val selectedDay by viewModel.selectedDay
     val systemUiController = rememberSystemUiController()
     val context =  LocalContext.current
 
@@ -120,8 +120,7 @@ fun HomeScreen(viewModel:HomeViewModel){
                         }
                     }
                 }
-                Calendar(selectedDay, { viewModel.selectTomorrow() },
-                    { viewModel.selectYesterday() })
+                Calendar(viewModel)
 
 //                PersonalInfo()
             }
@@ -179,7 +178,7 @@ fun PersonalInfo(){
     }
 }
 @Composable
-fun Calendar(selectedDay:Time, onSelectTomorrow:() -> Unit, onSelectYesterday:() -> Unit ){
+fun Calendar(viewModel:HomeViewModel){
 
     Column{
         Column (){
@@ -193,29 +192,30 @@ fun Calendar(selectedDay:Time, onSelectTomorrow:() -> Unit, onSelectYesterday:()
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row (verticalAlignment = Alignment.CenterVertically){
-                        Button(onClick = onSelectYesterday,
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF2F4F7),
-                                contentColor = Color(0xFF072100)
-                            ),
-                            modifier = Modifier.size(width = 50.dp, height = 50.dp)
-//               shape = RoundedCornerShape(40.dp),
-
-                        ) {
-                            Text("<")
-                        }
+//                        Button(onClick = onSelectYesterday,
+//                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF2F4F7),
+//                                contentColor = Color(0xFF072100)
+//                            ),
+//                            modifier = Modifier.size(width = 50.dp, height = 50.dp)
+////               shape = RoundedCornerShape(40.dp),
+//
+//                        ) {
+//                            Text("<")
+//                        }
+//
+//                        Button(onClick = onSelectTomorrow,
+//                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF2F4F7),
+//                                contentColor = Color(0xFF072100)
+//                            ),
+////               shape = RoundedCornerShape(40.dp),
+//                            modifier = Modifier.size(width = 50.dp, height = 50.dp)
+//                        ) {
+//                            Text(">")
+//                        }
                         Text(
-                            text = selectedDay.label,
+                            text = viewModel.selectedDay.value.label,
                             modifier = Modifier.padding(start = 10.dp, end = 10.dp)
                         )
-                        Button(onClick = onSelectTomorrow,
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF2F4F7),
-                                contentColor = Color(0xFF072100)
-                            ),
-//               shape = RoundedCornerShape(40.dp),
-                            modifier = Modifier.size(width = 50.dp, height = 50.dp)
-                        ) {
-                            Text(">")
-                        }
                     }
                     Column {
                         Box(
@@ -223,7 +223,7 @@ fun Calendar(selectedDay:Time, onSelectTomorrow:() -> Unit, onSelectYesterday:()
                             modifier = Modifier.fillMaxWidth()
                         ){
                             Text(
-                                text = selectedDay.day,
+                                text = viewModel.selectedDay.value.day,
                                 textAlign = TextAlign.Center,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 20.sp,
@@ -235,7 +235,7 @@ fun Calendar(selectedDay:Time, onSelectTomorrow:() -> Unit, onSelectYesterday:()
                             modifier = Modifier.fillMaxWidth()
                         ){
                             Text(
-                                text = selectedDay.dayOfWeek,
+                                text = viewModel.selectedDay.value.dayOfWeek,
                                 textAlign = TextAlign.Center,
                                 color = Color(0xFF79747E),
                                 fontSize = 15.sp,
@@ -250,15 +250,17 @@ fun Calendar(selectedDay:Time, onSelectTomorrow:() -> Unit, onSelectYesterday:()
             Modifier
                 .padding(20.dp)
                 .clip(RoundedCornerShape(60.dp))){
-            CounterCard(selectedDay)
+
+            CounterCard(viewModel)
         }
 
     }
 }
 @Composable
-fun CounterCard(selectedDay: Time){
+fun CounterCard(viewModel:HomeViewModel){
     Box (Modifier.background(Color(0xFF9DD67D)))
     {
+
         Column() {
             Box(
                 contentAlignment = Alignment.Center,
@@ -267,7 +269,7 @@ fun CounterCard(selectedDay: Time){
                     .padding(top = 20.dp)
             ){
                 Text(
-                    text = "Text",
+                    text = "I smoked today",
                     textAlign = TextAlign.Center,
                     fontSize = 30.sp
                 )
@@ -278,8 +280,9 @@ fun CounterCard(selectedDay: Time){
                     .fillMaxWidth()
                     .padding(20.dp)
             ){
+
                 Text(
-                    text = selectedDay.day,
+                    text = viewModel.selectedDay.value.counter.toString(),
                     textAlign = TextAlign.Center,
                     fontSize = 50.sp,
                     fontWeight = FontWeight.Bold
@@ -292,15 +295,17 @@ fun CounterCard(selectedDay: Time){
                     .background(Color(0xFF9DD67D))
                     .padding(bottom = 30.dp)
             ){
-                var valueCounter by remember {
-                    mutableIntStateOf(0)
-                }
-                CounterButton(value = valueCounter.toString(),
+//                var valueCounter by remember {
+//                    mutableIntStateOf(0)
+//                }
+                viewModel.retrieveCounterFromFirestore()
+                var valueCounter = viewModel.selectedDay.value.counter as? Long
+                CounterButton(value =viewModel.selectedDay.value.counter.toString(),
                     onValueIncreaseClick = {
-                        valueCounter += 1
+                        viewModel.updateCounterForSelectedDay(valueCounter?.plus(1) ?: 0)
                     },
                     onValueDecreaseClick = {
-                        valueCounter = maxOf(valueCounter - 1, 0)
+                        viewModel.updateCounterForSelectedDay(maxOf(valueCounter?.minus(1) ?: 0, 0))
                     },
                     onValueClearClick = {
                         valueCounter = 0
