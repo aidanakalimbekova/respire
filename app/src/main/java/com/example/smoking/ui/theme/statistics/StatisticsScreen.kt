@@ -9,12 +9,5 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun StatisticsScreen(){
-    val systemUiController = rememberSystemUiController()
-    SideEffect {
-        systemUiController.setStatusBarColor(
-            color = Color(0xFFF9F9F9)
-        )
-    }
     Text("then")
-
 }
