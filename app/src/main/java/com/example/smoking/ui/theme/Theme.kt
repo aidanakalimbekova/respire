@@ -55,11 +55,19 @@ fun SmokingTheme(
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+            }
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = Color(0XFFCDEFF3).toArgb() // here change the color
+            window.navigationBarColor = colorScheme.background.toArgb() // here change the color
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+        }
+    }
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,

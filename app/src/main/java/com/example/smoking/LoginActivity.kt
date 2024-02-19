@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import com.example.smoking.ui.theme.SmokingTheme
 import com.example.smoking.ui.theme.signin.GoogleAuthUiClient
 import com.example.smoking.ui.theme.signin.LoginScreen
 import com.google.android.gms.auth.api.identity.Identity
@@ -45,16 +46,13 @@ class LoginActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-<<<<<<< Updated upstream
-//            firebaseAuth.signOut()
-=======
-            firebaseAuth.signOut()
->>>>>>> Stashed changes
             getUserInfo()
             if(googleAuthUiClient.getSignedInUser() != null) {
                 onLoginSuccess()
             }
-            LoginScreen ({ onLoginSuccess() }, googleAuthUiClient )
+            SmokingTheme {
+                LoginScreen ({ onLoginSuccess() }, googleAuthUiClient )
+            }
         }
     }
 

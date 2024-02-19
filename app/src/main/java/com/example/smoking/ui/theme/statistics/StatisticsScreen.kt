@@ -44,14 +44,7 @@ import org.checkerframework.common.subtyping.qual.Bottom
 
 
 @Composable
-//@Preview(showBackground = true)
 fun StatisticsScreen(){
-    val systemUiController = rememberSystemUiController()
-    SideEffect {
-        systemUiController.setStatusBarColor(
-            color = Color(0xFFF9F9F9)
-        )
-    }
     Image(contentDescription = "cloud", painter = painterResource(id = R.drawable.cloud),
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxWidth())

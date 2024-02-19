@@ -37,6 +37,8 @@ import com.example.smoking.ui.theme.SmokingTheme
 import com.example.smoking.ui.theme.home.HomeScreen
 import com.example.smoking.ui.theme.home.HomeViewModel
 import com.example.smoking.ui.theme.profile.ProfileScreen
+import com.example.smoking.ui.theme.profile.ProfileViewModel
+import com.example.smoking.ui.theme.quest.LineChartViewModel
 import com.example.smoking.ui.theme.quest.QuestScreen
 import com.example.smoking.ui.theme.signin.GoogleAuthUiClient
 import com.example.smoking.ui.theme.signin.SignInScreen
@@ -75,10 +77,10 @@ fun SmokingApp() {
                     StatisticsScreen()
                 }
                 composable(BottomNavItem.Quest.route){
-                    QuestScreen()
+                    QuestScreen(LineChartViewModel())
                 }
                 composable(BottomNavItem.Profile.route){
-                    ProfileScreen()
+                    ProfileScreen(ProfileViewModel())
                 }
             }
         }
