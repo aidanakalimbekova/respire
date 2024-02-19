@@ -55,12 +55,6 @@ import com.example.smoking.R
 
 @Composable
 fun QuestScreen(viewModel: LineChartViewModel){
-    val auth = Firebase.auth
-    val curUser = auth.currentUser
-    var pic: Uri? = Uri.EMPTY
-    curUser?.run {
-        pic = curUser.photoUrl
-    }
     val s = viewModel.state.collectAsState()
     Column(modifier = Modifier.fillMaxSize()){
         Column (modifier = Modifier.background(Color(0XFFCDEFF3)), verticalArrangement = Arrangement.Center){
@@ -110,8 +104,9 @@ fun QuestScreen(viewModel: LineChartViewModel){
                         }
                         Spacer(modifier = Modifier.height(5.dp))
                         Row (verticalAlignment = Alignment.CenterVertically){
+                            val c : Uri = Uri.parse(friend.photo)
                             AsyncImage(
-                                model = pic,
+                                model = c,
                                 contentDescription = "Profile picture",
                                 modifier = Modifier
                                     .size(30.dp)

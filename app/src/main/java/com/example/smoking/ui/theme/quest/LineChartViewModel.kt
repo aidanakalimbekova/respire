@@ -51,7 +51,8 @@ class LineChartViewModel : ViewModel(){
                     val name = item["name"] as String
                     val smoked = item["smoked"] as Int
                     val streak = item["streak"] as Int
-                    l.add(Friend(name, smoked, streak))
+                    val photo = item["photo"] as String
+                    l.add(Friend(name, smoked, streak,  photo))
                     println("Name: $name, Smoked: $smoked, Streak: $streak")
                 }
                 l.sortBy { it.smoked }
@@ -61,7 +62,6 @@ class LineChartViewModel : ViewModel(){
             }
     }
 
-
-    data class Friend(val name:String, val smoked:Int, val streak:Int)
+    data class Friend(val name:String, val smoked:Int, val streak:Int, val photo:String)
 
 }
