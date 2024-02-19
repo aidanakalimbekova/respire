@@ -97,11 +97,6 @@ fun HomeScreen(viewModel:HomeViewModel){
     val auth = Firebase.auth
     val curUser = auth.currentUser
 
-//    SideEffect {
-//        systemUiController.setStatusBarColor(
-//            color = Color(0XFFCDEFF3)
-//        )
-//    }
         Column(){
             var name:String? = "j"
             curUser?.run {

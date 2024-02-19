@@ -46,7 +46,6 @@ class LoginActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-//            firebaseAuth.signOut()
             getUserInfo()
             if(googleAuthUiClient.getSignedInUser() != null) {
                 onLoginSuccess()
