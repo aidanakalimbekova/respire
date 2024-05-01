@@ -2,7 +2,7 @@ package com.example.smoking.ui.theme.quest
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.smoking.ui.theme.profile.Invitation
+//import com.example.smoking.ui.theme.profile.Invitation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore

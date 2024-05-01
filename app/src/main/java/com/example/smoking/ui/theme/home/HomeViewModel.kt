@@ -18,29 +18,13 @@ import java.util.Date
 class HomeViewModel : ViewModel() {
     private val d = LocalDate.now()
     private val r = formTime(d)
-    private val _selectedDay = mutableStateOf(Time(d, r[0], r[1], "Today", ""))
+    private val _selectedDay = mutableStateOf(Time(d, r[0], r[1], "Today", "", ""))
     val selectedDay: State<Time> = _selectedDay
     val auth = Firebase.auth
     val curUser = auth.currentUser
 
-//    init {
-//        retrieveCounterFromFirestore()
-//    }
-
-//    fun selectYesterday() {
-//       val yy = selectedDay.value.localDate.minusDays(1)
-//        val rr = formTime(yy)
-//        _selectedDay.value = Time(yy, rr[0], rr[1], "Yesterday", 0)
-//    }
-//
-//    fun selectTomorrow() {
-//        val ttt = selectedDay.value.localDate.plusDays(1)
-//        val rr = formTime(ttt)
-//        _selectedDay.value = Time(ttt, rr[0], rr[1], "Today", 0)
-//    }
     private val db = Firebase.firestore
 //    private val userCollection = db.collection("use")
-
     fun retrieveCounterFromFirestore() {
         val selectedDateString = selectedDay.value.localDate.format(DateTimeFormatter.ISO_DATE)
         var userId:String = ""
@@ -73,7 +57,17 @@ class HomeViewModel : ViewModel() {
         }
         }
 
-
+    fun getStreak(){
+        var userId:String = ""
+        curUser?.run {
+            userId = uid
+        }
+        viewModelScope.launch {
+            val temp = db.collection("users").document(userId).get().await()
+            val s = temp.data?.get("streak") as? String ?: "0"
+            _selectedDay.value = selectedDay.value.copy(streak = s)
+        }
+    }
     fun updateCounterForSelectedDay(newValue: Long) {
         val selectedDateString = selectedDay.value.localDate.format(DateTimeFormatter.ISO_DATE)
         var userId:String = ""
@@ -99,4 +93,4 @@ private fun formTime(d: LocalDate): List<String> {
     val formatDay = d.format(DateTimeFormatter.ofPattern("dd EEE"))
     return formatDay.split(" ")
 }
-data class Time(val localDate: LocalDate, val day: String, val dayOfWeek:String, val label: String, val counter: Any?)
+data class Time(val localDate: LocalDate, val day: String, val dayOfWeek:String, val label: String, val counter: Any?, val streak: String)

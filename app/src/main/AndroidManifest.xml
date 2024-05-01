@@ -23,8 +23,19 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".WelcomeScreenActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Smoking">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".MainActivity">
         </activity>
+
     </application>
 
 </manifest>

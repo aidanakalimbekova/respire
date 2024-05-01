@@ -4,10 +4,12 @@ package com.example.smoking.ui.theme.signin
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
-import com.example.smoking.R
+//import com.example.smoking.network.TokenManager
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.GetTokenResult
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -19,7 +21,6 @@ class GoogleAuthUiClient(
     private val oneTapClient: SignInClient
 ) {
     private val auth = Firebase.auth
-
     suspend fun signIn(): IntentSender? {
         val result = try {
             oneTapClient.beginSignIn(
@@ -44,7 +45,8 @@ class GoogleAuthUiClient(
                     UserData(
                         userId = uid,
                         username = displayName,
-                        profilePictureUrl = photoUrl?.toString()
+                        profilePictureUrl = photoUrl?.toString(),
+                        token = getIdToken(true).await().token.toString()
                     )
                 },
                 errorMessage = null
@@ -69,12 +71,20 @@ class GoogleAuthUiClient(
         }
     }
 
+
     fun getSignedInUser(): UserData? = auth.currentUser?.run {
-        UserData(
+        val user = UserData(
             userId = uid,
             username = displayName,
-            profilePictureUrl = photoUrl?.toString()
+            profilePictureUrl = photoUrl?.toString(),
+            token = ""
         )
+        getIdToken(true).addOnSuccessListener { result ->
+//            println(result.token)
+
+            user.token = result.token.toString()
+        }
+        user
     }
 
     private fun buildSignInRequest(): BeginSignInRequest {

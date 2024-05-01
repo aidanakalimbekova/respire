@@ -84,62 +84,62 @@ fun QuestScreen(viewModel: LineChartViewModel){
             }
         }
 
-        LazyColumn (modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 30.dp, end = 30.dp), verticalArrangement = Arrangement.Center,
-        ){
-            itemsIndexed(s.value){ index, friend->
-                Row(
-                    modifier = Modifier.padding(top = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center){
-                    Column {
-                        Row {
-                            Box(){
-                                Text("${index + 1}", fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-                            }
-                            Spacer(modifier = Modifier.width(5.dp))
-                            Box(){
-                                Text(friend.name, fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Row (verticalAlignment = Alignment.CenterVertically){
-                            val c : Uri = Uri.parse(friend.photo)
-                            AsyncImage(
-                                model = c,
-                                contentDescription = "Profile picture",
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
-                            Box(modifier = Modifier.width(240.dp)){
-                                if(friend.smoked == 0){
-                                    Box(
-                                        modifier = Modifier
-                                            .background(Color(0xFFF9F9F9))
-                                            .width(240.dp)
-                                    ){
-                                        Text(text = "Rockstar!", fontSize = 15.sp, color = Color.Black)
-                                    }
-                                }else{
-                                    CustomProgressBar(
-                                        Modifier
-                                            .clip(shape = RoundedCornerShape(30.dp))
-                                            .height(14.dp), 240.dp, Color.Gray, Color(0xFF9DD67D)
-                                        , s = friend.smoked, true )
-                                }
-                            }
-                            Spacer(modifier = Modifier.width(5.dp))
-                            Box(){
-                                Text("${friend.smoked}", fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-                            }
-                        }
-                    }
-                }
-            }
-        }
+//        LazyColumn (modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(start = 30.dp, end = 30.dp), verticalArrangement = Arrangement.Center,
+//        ){
+//            itemsIndexed(s.value){ index, friend->
+//                Row(
+//                    modifier = Modifier.padding(top = 10.dp),
+//                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center){
+//                    Column {
+//                        Row {
+//                            Box(){
+//                                Text("${index + 1}", fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
+//                            }
+//                            Spacer(modifier = Modifier.width(5.dp))
+//                            Box(){
+//                                Text(friend.name, fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
+//                            }
+//                        }
+//                        Spacer(modifier = Modifier.height(5.dp))
+//                        Row (verticalAlignment = Alignment.CenterVertically){
+//                            val c : Uri = Uri.parse(friend.photo)
+//                            AsyncImage(
+//                                model = c,
+//                                contentDescription = "Profile picture",
+//                                modifier = Modifier
+//                                    .size(30.dp)
+//                                    .clip(CircleShape),
+//                                contentScale = ContentScale.Crop
+//                            )
+//                            Spacer(modifier = Modifier.width(5.dp))
+//                            Box(modifier = Modifier.width(240.dp)){
+//                                if(friend.smoked == 0){
+//                                    Box(
+//                                        modifier = Modifier
+//                                            .background(Color(0xFFF9F9F9))
+//                                            .width(240.dp)
+//                                    ){
+//                                        Text(text = "Rockstar!", fontSize = 15.sp, color = Color.Black)
+//                                    }
+//                                }else{
+//                                    CustomProgressBar(
+//                                        Modifier
+//                                            .clip(shape = RoundedCornerShape(30.dp))
+//                                            .height(14.dp), 240.dp, Color.Gray, Color(0xFF9DD67D)
+//                                        , s = friend.smoked, true )
+//                                }
+//                            }
+//                            Spacer(modifier = Modifier.width(5.dp))
+//                            Box(){
+//                                Text("${friend.smoked}", fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
     }
 }

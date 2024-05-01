@@ -91,9 +91,6 @@ import java.time.LocalDate
 //@Preview
 @Composable
 fun HomeScreen(viewModel:HomeViewModel){
-    val systemUiController = rememberSystemUiController()
-    val context =  LocalContext.current
-
     val auth = Firebase.auth
     val curUser = auth.currentUser
 
@@ -102,6 +99,7 @@ fun HomeScreen(viewModel:HomeViewModel){
             curUser?.run {
                 name = curUser.displayName
             }
+            viewModel.getStreak()
             Column (horizontalAlignment = Alignment.CenterHorizontally){
                 Column (Modifier.background(Color(0XFFCDEFF3))){
                     Row (verticalAlignment = Alignment.CenterVertically,
@@ -111,7 +109,7 @@ fun HomeScreen(viewModel:HomeViewModel){
                         Text("$name", fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.Bottom,){
                             Icon(Icons.Filled.LocalFireDepartment, contentDescription =  "strike", tint = Color(0xFFFF5722) )
-                            Text("5", fontSize = 20.sp, modifier = Modifier.padding(start = 4.dp))
+                            Text(viewModel.selectedDay.value.streak, fontSize = 20.sp, modifier = Modifier.padding(start = 4.dp))
                         }
                     }
                 }

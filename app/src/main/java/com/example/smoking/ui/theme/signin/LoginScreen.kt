@@ -28,8 +28,10 @@ fun LoginScreen(onClick:  () -> Unit, googleAuthUiClient: GoogleAuthUiClient){
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { result ->
+
             if(result.resultCode == Activity.RESULT_OK) {
                 coroutineScope.launch {
+
                     val signInResult = googleAuthUiClient.signInWithIntent(
                         intent = result.data ?: return@launch
                     )
@@ -64,6 +66,7 @@ fun LoginScreen(onClick:  () -> Unit, googleAuthUiClient: GoogleAuthUiClient){
         state = state,
         onSignInClick = {
             coroutineScope.launch {
+//                googleAuthUiClient.signOut()
                 val signInIntentSender = googleAuthUiClient.signIn()
                 launcher.launch(
                     IntentSenderRequest.Builder(

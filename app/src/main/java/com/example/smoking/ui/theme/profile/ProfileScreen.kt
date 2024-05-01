@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.outlined.FileCopy
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -50,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
@@ -62,136 +65,121 @@ import com.google.firebase.ktx.Firebase
 
 @Composable
 fun ProfileScreen(viewModel: ProfileViewModel){
-//    val systemUiController = rememberSystemUiController()
-//    SideEffect {
-//        systemUiController.setStatusBarColor(
-//            color = Color(0XFFCDEFF3)
-//        )
-//    }
-//    viewModel.listOfInvitations()
-//    val state by remember { viewModel.state }
-    Column(){
-//        var name:String? = "j"
-//        curUser?.run {
-//            name = curUser.displayName
-//        }
-        val auth = Firebase.auth
-        val curUser = auth.currentUser
-        var pic: Uri? = Uri.EMPTY
-        var name:String? = ""
-        var uid:String? = ""
-        curUser?.run {
-            pic = curUser.photoUrl
-            name = curUser.displayName
-            uid = curUser.uid
+    val profileState by viewModel.profileState.collectAsStateWithLifecycle()
+    when (val state = profileState) {
+        is ProfileState.Loading -> {
+            // Show loading indicator
+            LoadingScreen()
         }
+        is ProfileState.Success -> {
+            val profile = state.profile
+            // Display profile information
+            ProfileContent(profile)
+        }
+        is ProfileState.Error -> {
+            // Show error message
+            ErrorScreen(state.message)
+        }
+    }
 
+}
+
+@Composable
+fun ProfileContent(profile: Profile){
+    Column(){
         Column (horizontalAlignment = Alignment.Start){
-            Column (Modifier.background(Color(0XFFCDEFF3))){
-                Box(Modifier.padding(20.dp)){
-                    Text("Profile", fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-                }
+            Column (modifier = Modifier.padding(20.dp)){
                 Box(){
-                    Image(
-                        contentDescription = "third", painter = painterResource(id = R.drawable.third),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.padding(20.dp)){
-                        Text("$name", fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-                        Spacer(Modifier.width(100.dp))
+                    Row(){
+                        Text(profile.name, fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
+                        Spacer(Modifier.width(150.dp))
+
                         AsyncImage(
-                            model = pic,
+                            model = profile.pic,
                             contentDescription = "Profile picture",
                             modifier = Modifier
                                 .size(70.dp)
                                 .clip(CircleShape),
                             contentScale = ContentScale.Crop
                         )
+
                     }
+                }
+
+                Text(profile.username, fontSize = 15.sp, fontWeight = FontWeight.Normal, textAlign = TextAlign.Start)
+
+
+                Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+                    Text(text = "Add a friend")
                 }
             }
-            Column (Modifier.padding(20.dp)){
-                var text by remember { mutableStateOf("") }
-                val clipboardManager = LocalClipboardManager.current
-                Row (verticalAlignment = Alignment.CenterVertically) {
-                    Box{
-                        Text("Share your id with friends", fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-                    }
-                    Spacer(Modifier.width(20.dp))
-                    Button(onClick = { clipboardManager.setText(AnnotatedString("$uid")) }) {
-                        Icon(imageVector = Icons.Outlined.FileCopy, contentDescription = "clip")
-                    }
-                }
-                Box{
-                    Text("$uid", fontSize = 10.sp, textAlign = TextAlign.Start)
-                }
-                Spacer(Modifier.height(20.dp))
-                Row (horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
-                    OutlinedTextField(
-                        value = text,
-                        onValueChange = { text = it },
-                        label = { Text("Invite your friend") },
-                        modifier = Modifier.width(200.dp)
-                    )
-                    Spacer(Modifier.width(30.dp))
-                    Box{
-                        Button(onClick = {
-//                        println(text)
-                            viewModel.invite(text)
-                            text = ""
-                        }) {
-                            Text("Invite")
-                        }
-                    }
-                }
-                Box(Modifier.padding(top = 20.dp)){
-                    Text("Invitations", fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-                }
-                val s by viewModel.state.collectAsState()
-                LazyColumn(){
-                    items(s, key = { it.friendId }) { invitation ->
-                        Box(){
-                            Row (modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 20.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
-                                AsyncImage(
-                                    model = invitation.photoUrl,
-                                    contentDescription = "Profile picture",
-                                    modifier = Modifier
-                                        .size(30.dp)
-                                        .clip(CircleShape),
-                                    contentScale = ContentScale.Crop
-                                )
-                                Spacer(Modifier.width(20.dp))
-                                Box(Modifier.width(80.dp)){
-                                    Text(invitation.name)
-                                }
-                                Spacer(Modifier.width(30.dp))
-                                TextButton(
-                                    modifier = Modifier
-                                        .height(40.dp)
-                                        .width(70.dp),
-                                    onClick = { viewModel.handleInv(false, invitation.friendId) }) {
-                                    Text("Ignore", fontSize = 10.sp)
-                                }
-
-                                Spacer(Modifier.width(5.dp))
-                                OutlinedButton(
-                                    modifier = Modifier
-                                        .height(30.dp)
-                                        .width(90.dp),
-                                    onClick = { viewModel.handleInv(true, invitation.friendId) }) {
-                                    Text("Accept", fontSize = 10.sp)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
         }
-
     }
+}
 
+@Composable
+fun ListFriends(){
+    LazyColumn(){
+//        items(s, key = { it.friendId }) { invitation ->
+//            Box(){
+//                Row (modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(bottom = 20.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
+//                    AsyncImage(
+//                        model = invitation.photoUrl,
+//                        contentDescription = "Profile picture",
+//                        modifier = Modifier
+//                            .size(30.dp)
+//                            .clip(CircleShape),
+//                        contentScale = ContentScale.Crop
+//                    )
+//                    Spacer(Modifier.width(20.dp))
+//                    Box(Modifier.width(80.dp)){
+//                        Text(invitation.name)
+//                    }
+//                    Spacer(Modifier.width(30.dp))
+//                    TextButton(
+//                        modifier = Modifier
+//                            .height(40.dp)
+//                            .width(70.dp),
+//                        onClick = { viewModel.handleInv(false, invitation.friendId) }) {
+//                        Text("Ignore", fontSize = 10.sp)
+//                    }
+//
+//                    Spacer(Modifier.width(5.dp))
+//                    OutlinedButton(
+//                        modifier = Modifier
+//                            .height(30.dp)
+//                            .width(90.dp),
+//                        onClick = { viewModel.handleInv(true, invitation.friendId) }) {
+//                        Text("Accept", fontSize = 10.sp)
+//                    }
+//                }
+//            }
+//        }
+    }
+}
+
+
+@Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.padding(16.dp),
+            color = Color.Black // Customize the color as needed
+        )
+    }
+}
+
+@Composable
+fun ErrorScreen(errorMessage: String) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(errorMessage)
+    }
 }
