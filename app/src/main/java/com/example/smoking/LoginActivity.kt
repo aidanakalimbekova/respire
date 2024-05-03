@@ -77,7 +77,7 @@ class LoginActivity : ComponentActivity() {
     private fun onLoginSuccess() {
         lifecycleScope.launch {
 //            googleAuthUiClient.signOut()
-            if(getUser()?.status == "CREATED"){
+            if(getUser()?.status == "created"){
                 println("what is happening")
                 val intent = Intent(this@LoginActivity, WelcomeScreenActivity::class.java)
                 startActivity(intent)
