@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.FileCopy
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FileCopy
 import androidx.compose.material3.Button
@@ -59,6 +60,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -94,9 +96,20 @@ fun ProfileScreen(viewModel: ProfileViewModel){
 
 }
 
+
 @Composable
 fun ProfileContent(profile: Profile){
-    Column(){
+    Column(modifier = Modifier
+        .verticalScroll(rememberScrollState())
+//        .background(
+//        brush = Brush.verticalGradient(
+//            colors = listOf(
+//                Color(0xFF93F1F7),
+//                Color(0xFFF6DF67),
+//            )
+//        )
+//    )
+        ){
         Column (horizontalAlignment = Alignment.Start){
             Column (modifier = Modifier.padding(20.dp)){
                 Box(){
@@ -118,7 +131,6 @@ fun ProfileContent(profile: Profile){
 
                 Text(profile.username, fontSize = 15.sp, fontWeight = FontWeight.Normal, textAlign = TextAlign.Start)
 
-
                 Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
                     Text(text = "Add a friend")
                 }
@@ -129,14 +141,15 @@ fun ProfileContent(profile: Profile){
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF93F1F7),
-                        Color(0xFFF6DF67),
-                    )
-                )
-            ),
+            .background(Color.White),
+//        .background(
+//            brush = Brush.verticalGradient(
+//                colors = listOf(
+//                    Color(0xFF93F1F7),
+//                    Color(0xFFF6DF67),
+//                )
+//            )
+//        ),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Row(){
@@ -144,15 +157,15 @@ fun ProfileContent(profile: Profile){
                 StatisticCard()
                 StatisticCard()
             }
-            com.example.smoking.ui.theme.statistics.CigaretteProgressBox(
-                title = "hey",
-                progress = 0.7f
-            )
+            com.example.smoking.ui.theme.statistics.CigaretteProgressBox(progress = 0.7f)
+
+            Spacer(modifier = Modifier.padding(5.dp))
             Text(
                 text = "Health Improvements",
+                fontWeight = FontWeight.Bold,
                 fontSize = 20.sp
             )
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())){
+            Column(modifier = Modifier.padding(5.dp)){
                 Row(){
                     HealthCard(title = "Progress", progress = 0.75f)
                     HealthCard(title = "Progress", progress = 0.75f)
@@ -248,11 +261,9 @@ fun RowScope.HealthCard(title: String, progress: Float){
             .border(
                 border = BorderStroke(1.dp, Color.Gray),
                 shape = RoundedCornerShape(8.dp)
-            )
-            .padding(16.dp), // Add padding inside the box
+            ),
         contentAlignment = Alignment.Center
     ) {
-        // Column to arrange the title and circular progress bar vertically
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -261,28 +272,30 @@ fun RowScope.HealthCard(title: String, progress: Float){
             // Title in the top-center
             Text(
                 text = title,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(bottom = 16.dp) // Add padding below the title
             )
 
             // Circular progress bar below the title
             CircularProgressIndicator(
                 progress = progress,
-                modifier = Modifier.size(60.dp), // Set the size of the circular progress bar
+                strokeWidth = 10.dp,
+                modifier = Modifier.size(80.dp), // Set the size of the circular progress bar
                 color = when {
                     progress <= 0.3f -> Color.Red // Red for low progress
                     progress <= 0.6f -> Color.Yellow // Yellow for medium progress
-                    else -> Color.Green // Green for high progress
+                    else -> Color(0xFF8BC34A) // Green for high progress
                 }
             )
         }
     }
 }
 @Composable
-fun CigaretteProgressBox(title: String, progress: Float) {
+fun CigaretteProgressBox(progress: Float) {
     Box(
         modifier = Modifier
-            .padding(8.dp)
-            .height(130.dp)
+            .padding(top=10.dp, bottom = 10.dp, start=8.dp, end=8.dp)
             .border(
                 border = BorderStroke(1.dp, Color.Gray),
                 shape = RoundedCornerShape(8.dp)
@@ -293,41 +306,39 @@ fun CigaretteProgressBox(title: String, progress: Float) {
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = title,
-                modifier = Modifier.padding(bottom = 8.dp) // Add padding below the title
-            )
 
             Text(
                 text = "Cigarettes persisted",
+                fontSize = 15.sp,
                 modifier = Modifier.padding(bottom = 8.dp) // Add padding below the title
             )
-            LinearProgressIndicator(
-                progress = progress,
-                modifier = Modifier
-                    .height(8.dp) // Set the height of the progress bar
-                    .fillMaxWidth(0.5f), // Set the width of the progress bar to half of the box
-                color = when {
-                    progress <= 0.3f -> Color.Red // Red for low progress
-                    progress <= 0.6f -> Color.Yellow // Yellow for medium progress
-                    else -> Color.Green // Green for high progress
-                }
-            )
+            Row(modifier=Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween){
+                LinearProgressIndicator(
+                    progress = 0.3f,
+                    modifier = Modifier
+                        .height(8.dp) // Set the height of the progress bar
+                        .fillMaxWidth(0.7f), // Set the width of the progress bar to half of the box
+                    color = Color(0xFF8BC34A)
+                )
+                Text(text="3/10")
+            }
+            Spacer(modifier = Modifier.padding(5.dp))
+
             Text(
                 text = "Cigarettes smoked",
+                fontSize = 15.sp,
                 modifier = Modifier.padding(bottom = 8.dp) // Add padding below the title
             )
-            LinearProgressIndicator(
-                progress = progress,
-                modifier = Modifier
-                    .height(8.dp) // Set the height of the progress bar
-                    .fillMaxWidth(0.5f), // Set the width of the progress bar to half of the box
-                color = when {
-                    progress <= 0.3f -> Color.Red // Red for low progress
-                    progress <= 0.6f -> Color.Yellow // Yellow for medium progress
-                    else -> Color.Green // Green for high progress
-                }
-            )
+            Row(modifier=Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween) {
+                LinearProgressIndicator(
+                    progress = 0.7f,
+                    modifier = Modifier
+                        .height(8.dp) // Set the height of the progress bar
+                        .fillMaxWidth(0.7f), // Set the width of the progress bar to half of the box
+                    color = Color(0xFFE95247),
+                )
+                Text(text="7/10")
+            }
         }
     }
 }
@@ -346,25 +357,32 @@ fun RowScope.StatisticCard(){
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = "Star Icon",
-                modifier = Modifier.size(40.dp),
-                tint = Color.Blue
+                imageVector = Icons.Default.Payments,
+                contentDescription = "Icon",
+                modifier = Modifier
+                    .size(50.dp)
+                    .background(color = Color(0xFFFFC658), shape = CircleShape)
+                    .padding(10.dp),
+                tint = Color.White
             )
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "17",
-                fontSize = 20.sp
+                text = "17$",
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 text = "Money Saved",
-                fontSize = 10.sp
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center
             )
         }
     }
