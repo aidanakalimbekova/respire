@@ -44,6 +44,10 @@ import com.example.smoking.ui.theme.profile.InvitationsScreen
 import com.example.smoking.ui.theme.profile.InvitationsViewModel
 import com.example.smoking.ui.theme.profile.ProfileScreen
 import com.example.smoking.ui.theme.profile.ProfileViewModel
+import com.example.smoking.ui.theme.quest.ChallengeDetailViewModel
+import com.example.smoking.ui.theme.quest.ChallengeDetailsScreen
+import com.example.smoking.ui.theme.quest.CreateChallengeViewModel
+import com.example.smoking.ui.theme.quest.CreateQuestScreen
 import com.example.smoking.ui.theme.quest.LineChartViewModel
 import com.example.smoking.ui.theme.quest.QuestScreen
 import com.example.smoking.ui.theme.signin.GoogleAuthUiClient
@@ -83,7 +87,7 @@ fun SmokingApp() {
                     StatisticsScreen()
                 }
                 composable(BottomNavItem.Quest.route){
-                    QuestScreen(LineChartViewModel())
+                    QuestScreen(LineChartViewModel(), onClick = { smokeNavController.navigate("createQuest") }, navController = smokeNavController)
                 }
                 composable(BottomNavItem.Profile.route){
                     ProfileScreen(ProfileViewModel(), onClick = { smokeNavController.navigate("addfriend") }, onFriends = { smokeNavController.navigate("friends") }, onRequests = {smokeNavController.navigate("invitations") })
@@ -97,11 +101,26 @@ fun SmokingApp() {
                 composable("invitations") {
                     InvitationsScreen(onClick = { smokeNavController.navigate("profile") }, InvitationsViewModel())
                 }
+                composable("createQuest") {
+                    CreateQuestScreen(onClick = {smokeNavController.navigate("quest")},
+                        viewModel = CreateChallengeViewModel()
+                    )
+                }
+                composable("challengeDetails/{challengeId}") {backStackEntry ->
+                    val challengeId = backStackEntry.arguments?.getString("challengeId") ?: ""
+                    ChallengeDetailsScreen( navController = smokeNavController,
+                        viewModel = ChallengeDetailViewModel(challengeId)
+                    )
+                }
+//                composable("leaderboard/{challengeId}") { backStackEntry ->
+//                    LeaderboardScreen(onClick = {smokeNavController.navigate("quest")})
+//                }
+            }
             }
         }
     }
-}
 
+//navController.navigate("challengeDetails/${it.id}")
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
