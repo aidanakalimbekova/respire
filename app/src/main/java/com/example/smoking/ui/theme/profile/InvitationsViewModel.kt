@@ -86,14 +86,11 @@ class InvitationsViewModel: ViewModel()  {
                 )
             } catch (e: Exception) {
 
-                // Handle error fetching user details for invitation
                 println("Failed process")
             }
         }
         return processedInvitations
     }
-
-
 }
 
 

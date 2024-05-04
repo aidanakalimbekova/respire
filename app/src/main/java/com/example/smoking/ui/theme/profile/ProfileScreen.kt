@@ -106,7 +106,7 @@ fun ProfileContent(profile: Profile, onClick: () -> Unit, onFriends: () -> Unit,
                 Box(){
                     Row(){
                         Text(profile.name, fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-                        Spacer(Modifier.width(150.dp))
+//                        Spacer(Modifier.width(150.dp))
 
                         AsyncImage(
                             model = profile.pic,
@@ -155,6 +155,49 @@ fun ProfileContent(profile: Profile, onClick: () -> Unit, onFriends: () -> Unit,
                 }
 
 
+            }
+        }
+
+        //Statistics
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF93F1F7),
+                        Color(0xFFF6DF67),
+                    )
+                )
+            ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Row(){
+                StatisticCard()
+                StatisticCard()
+                StatisticCard()
+            }
+            com.example.smoking.ui.theme.statistics.CigaretteProgressBox(
+                title = "hey",
+                progress = 0.7f
+            )
+            Text(
+                text = "Health Improvements",
+                fontSize = 20.sp
+            )
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())){
+                Row(){
+                    HealthCard(title = "Progress", progress = 0.75f)
+                    HealthCard(title = "Progress", progress = 0.75f)
+                }
+                Row(){
+                    HealthCard(title = "Progress", progress = 0.75f)
+                    HealthCard(title = "Progress", progress = 0.75f)
+                }
+                Row(){
+                    HealthCard(title = "Progress", progress = 0.75f)
+                    HealthCard(title = "Progress", progress = 0.75f)
+                }
             }
         }
 

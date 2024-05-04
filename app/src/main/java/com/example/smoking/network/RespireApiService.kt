@@ -55,10 +55,16 @@ interface RespireApiService {
     suspend fun postChallenge(
         @Body challenge: ChallengePut
     ): Response<Unit>
-    @GET("challenges/user/{userId}")
-    suspend fun getChallenges(
-        @Path("userId") userId: String
+
+    @GET("challenges")
+    suspend fun getChallengesList(
+        @Query("invite") invite: String
     ): Response<Challenges>
+
+    @GET("challenges/{id}")
+    suspend fun getChallenge(
+        @Path("id") id: String
+    ): Response<ChallengeX>
 
 
 
