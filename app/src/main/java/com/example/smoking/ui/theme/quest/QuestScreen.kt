@@ -1,153 +1,164 @@
 package com.example.smoking.ui.theme.quest
 
-import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import coil.compose.AsyncImage
-import com.example.smoking.R
+import com.example.smoking.network.Challenge
+import java.time.LocalDate
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.util.Locale
 
 
 @Composable
-fun QuestScreen(viewModel: LineChartViewModel){
-    val auth = Firebase.auth
-    val curUser = auth.currentUser
-    var pic: Uri? = Uri.EMPTY
-    curUser?.run {
-        pic = curUser.photoUrl
-    }
-    val s = viewModel.state.collectAsState()
-    Column(modifier = Modifier.fillMaxSize()){
-        Column (modifier = Modifier.background(Color(0XFFCDEFF3)), verticalArrangement = Arrangement.Center){
-            Box(modifier = Modifier.padding(20.dp)){
-                Text("Friend's Quest", fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
+fun QuestScreen(viewModel: LineChartViewModel, onClick: () -> Unit, navController: NavController) {
+    val state = viewModel.challengeState.collectAsState().value
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(verticalArrangement = Arrangement.Center) {
+            Box(modifier = Modifier.padding(20.dp)) {
+                Text(
+                    "Friend's Quest",
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Start
+                )
             }
-            Column (modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
-                Box(){
-                    Image(
-                        contentDescription = "third", painter = painterResource(id = R.drawable.cloud),
-                        contentScale = ContentScale.Fit,
+            Box(
+                Modifier
+                    .padding(20.dp)
+                    .fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Button(
+                        onClick = onClick,
                         modifier = Modifier.fillMaxWidth(),
-                    )
-
-                    Column (modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
-                        Spacer(Modifier.height(30.dp))
-                        Box(){
-                            Text("Buy me coffee", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                        }
-                        Box(Modifier.padding(top = 10.dp)){
-                            Text("20-27 Feb", fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                        }
+                        contentPadding = PaddingValues(1.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        )
+                    ) {
+                        Icon(
+                            Icons.Filled.Add,
+                            contentDescription = "add",
+                            tint = Color.Black
+                        )
+                        Text("Create new quest")
                     }
-                }
+            }
+
+            when (state) {
+                is ChallengeState.Loading -> LoadingView()
+                is ChallengeState.Success -> ChallengesListView(state.challengesInv, state.challengesAcc, viewModel, navController)
+                is ChallengeState.Error -> ErrorView(state.message)
             }
         }
+    }
 
-        LazyColumn (modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 30.dp, end = 30.dp), verticalArrangement = Arrangement.Center,
-        ){
-            itemsIndexed(s.value){ index, friend->
-                Row(
-                    modifier = Modifier.padding(top = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center){
-                    Column {
-                        Row {
-                            Box(){
-                                Text("${index + 1}", fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-                            }
-                            Spacer(modifier = Modifier.width(5.dp))
-                            Box(){
-                                Text(friend.name, fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Row (verticalAlignment = Alignment.CenterVertically){
-                            AsyncImage(
-                                model = pic,
-                                contentDescription = "Profile picture",
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
-                            Box(modifier = Modifier.width(240.dp)){
-                                if(friend.smoked == 0){
-                                    Box(
-                                        modifier = Modifier
-                                            .background(Color(0xFFF9F9F9))
-                                            .width(240.dp)
-                                    ){
-                                        Text(text = "Rockstar!", fontSize = 15.sp, color = Color.Black)
-                                    }
-                                }else{
-                                    CustomProgressBar(
-                                        Modifier
-                                            .clip(shape = RoundedCornerShape(30.dp))
-                                            .height(14.dp), 240.dp, Color.Gray, Color(0xFF9DD67D)
-                                        , s = friend.smoked, true )
-                                }
-                            }
-                            Spacer(modifier = Modifier.width(5.dp))
-                            Box(){
-                                Text("${friend.smoked}", fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
+}
+@Composable
+fun LoadingView() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
     }
 }
+
+@Composable
+fun ChallengesListView(challengesInv: List<Challenge>, challengesAcc:  List<Challenge>, viewModel: LineChartViewModel, navController: NavController) {
+    LazyColumn {
+        items(challengesInv) { challenge ->
+            InvitedChallengeCard(challenge, viewModel, navController)
+        }
+        items(challengesAcc) { challenge ->
+            AcceptedChallengeCard(challenge, viewModel, navController)
+        }
+    }
+}
+
+@Composable
+fun ErrorView(message: String) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = message, color = Color.Red)
+    }
+}
+@Composable
+fun InvitedChallengeCard(challenge: Challenge, viewModel: LineChartViewModel, navController: NavController) {
+    OutlinedCard(modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White, //Card background color
+            contentColor = Color.Black,  //Card content color,e.g.text,
+        ),
+        elevation = CardDefaults.cardElevation()
+    ) {
+        Column(Modifier.padding(start = 20.dp, bottom = 20.dp)) {
+            Text("Invited by: ${challenge.owner_id}", style = MaterialTheme.typography.bodyMedium)
+            Text("challenge.title", style = MaterialTheme.typography.headlineMedium)
+            Text("Days left: challenge.daysLeft")
+            Button(colors = ButtonDefaults.buttonColors(Color(0XFFFFD366)), onClick = { /* Handle view more */ }) {
+                Text("View the quest")
+            }
+        }
+    }
+}
+
+@Composable
+fun AcceptedChallengeCard(challenge: Challenge, viewModel: LineChartViewModel, navController: NavController) {
+    OutlinedCard(modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp)
+        .clickable {
+            viewModel.navigateToChallengeDetails(navController, challenge.id)
+            // Handle click to view challenge details
+        }, colors = CardDefaults.cardColors(
+            containerColor = Color.White, //Card background color
+            contentColor = Color.Black  //Card content color,e.g.text
+        ),
+            elevation = CardDefaults.cardElevation()) {
+        Column(Modifier.padding(start = 20.dp, bottom = 20.dp)) {
+            val originalFormatter = DateTimeFormatter.ISO_DATE_TIME
+            val today = LocalDate.now()
+            val dateTime = ZonedDateTime.parse(challenge.end_date, originalFormatter)
+            val targetDate = dateTime.toLocalDate()
+            val daysBetween = ChronoUnit.DAYS.between(today, targetDate).toInt()
+
+            Text(challenge.name, style =  MaterialTheme.typography.headlineMedium)
+            Text("Days left: $daysBetween")
+        }
+    }
+}
+
 @Composable
 fun CustomProgressBar(
     modifier: Modifier, width: Dp, backgroundColor: Color, foregroundColor: Color, s: Int,

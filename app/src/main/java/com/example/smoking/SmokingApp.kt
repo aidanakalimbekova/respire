@@ -36,8 +36,18 @@ import androidx.navigation.compose.rememberNavController
 import com.example.smoking.ui.theme.SmokingTheme
 import com.example.smoking.ui.theme.home.HomeScreen
 import com.example.smoking.ui.theme.home.HomeViewModel
+import com.example.smoking.ui.theme.profile.AddFriendScreen
+import com.example.smoking.ui.theme.profile.AddFriendViewModel
+import com.example.smoking.ui.theme.profile.FriendsScreen
+import com.example.smoking.ui.theme.profile.FriendsViewModel
+import com.example.smoking.ui.theme.profile.InvitationsScreen
+import com.example.smoking.ui.theme.profile.InvitationsViewModel
 import com.example.smoking.ui.theme.profile.ProfileScreen
 import com.example.smoking.ui.theme.profile.ProfileViewModel
+import com.example.smoking.ui.theme.quest.ChallengeDetailViewModel
+import com.example.smoking.ui.theme.quest.ChallengeDetailsScreen
+import com.example.smoking.ui.theme.quest.CreateChallengeViewModel
+import com.example.smoking.ui.theme.quest.CreateQuestScreen
 import com.example.smoking.ui.theme.quest.LineChartViewModel
 import com.example.smoking.ui.theme.quest.QuestScreen
 import com.example.smoking.ui.theme.signin.GoogleAuthUiClient
@@ -71,22 +81,46 @@ fun SmokingApp() {
             ) {
 
                 composable(BottomNavItem.Home.route){
-                    HomeScreen(viewModel = HomeViewModel())
+                    HomeScreen()
                 }
                 composable(BottomNavItem.Statistics.route){
                     StatisticsScreen()
                 }
                 composable(BottomNavItem.Quest.route){
-                    QuestScreen(LineChartViewModel())
+                    QuestScreen(LineChartViewModel(), onClick = { smokeNavController.navigate("createQuest") }, navController = smokeNavController)
                 }
                 composable(BottomNavItem.Profile.route){
-                    ProfileScreen(ProfileViewModel())
+                    ProfileScreen(ProfileViewModel(), onClick = { smokeNavController.navigate("addfriend") }, onFriends = { smokeNavController.navigate("friends") }, onRequests = {smokeNavController.navigate("invitations") })
                 }
+                composable("addfriend") {
+                    AddFriendScreen(onClick = { smokeNavController.navigate("profile") }, AddFriendViewModel())
+                }
+                composable("friends") {
+                    FriendsScreen(onClick = { smokeNavController.navigate("profile") }, FriendsViewModel())
+                }
+                composable("invitations") {
+                    InvitationsScreen(onClick = { smokeNavController.navigate("profile") }, InvitationsViewModel())
+                }
+                composable("createQuest") {
+                    CreateQuestScreen(onClick = {smokeNavController.navigate("quest")},
+                        viewModel = CreateChallengeViewModel()
+                    )
+                }
+                composable("challengeDetails/{challengeId}") {backStackEntry ->
+                    val challengeId = backStackEntry.arguments?.getString("challengeId") ?: ""
+                    ChallengeDetailsScreen( navController = smokeNavController,
+                        viewModel = ChallengeDetailViewModel(challengeId)
+                    )
+                }
+//                composable("leaderboard/{challengeId}") { backStackEntry ->
+//                    LeaderboardScreen(onClick = {smokeNavController.navigate("quest")})
+//                }
+            }
             }
         }
     }
-}
 
+//navController.navigate("challengeDetails/${it.id}")
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
