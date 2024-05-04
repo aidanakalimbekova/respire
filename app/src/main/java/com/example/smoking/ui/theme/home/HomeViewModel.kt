@@ -69,23 +69,8 @@ class HomeViewModel : ViewModel() {
         }
     }
     fun updateCounterForSelectedDay(newValue: Long) {
-        val selectedDateString = selectedDay.value.localDate.format(DateTimeFormatter.ISO_DATE)
-        var userId:String = ""
-        curUser?.run {
-            userId = uid
-        }
-        viewModelScope.launch {
-            // Perform the query
-            db.collection("users").document(userId).collection("smokeFreeDays")
-                .document(selectedDateString).update("cigarettesSmoked", newValue)
-                .addOnSuccessListener {
-                    _selectedDay.value = selectedDay.value.copy(counter = newValue)
-                    println("Success")
-                }
-                .addOnFailureListener { exception ->
-                    println("Error getting documents: $exception")
-                }
-        }
+//        val selectedDateString = selectedDay.value.localDate.format(DateTimeFormatter.ISO_DATE)
+        _selectedDay.value = selectedDay.value.copy(counter = newValue)
     }
 }
 

@@ -68,6 +68,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -104,20 +105,16 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-@Preview
 @Composable
-fun HomeScreen() {
+fun HomeScreen(viewModel:HomeViewModel) {
 
+    val currentDate = LocalDate.now()
+    val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("E, d MMM"))
 //    val auth = Firebase.auth
 //    val curUser = auth.currentUser
-
         Column(){
-            var name:String? = "j"
-//            curUser?.run {
-//                name = curUser.displayName
-//            }
-//            viewModel.getStreak()
             Column (horizontalAlignment = Alignment.CenterHorizontally){
                 Column (Modifier.background(brush = Brush.verticalGradient(
                     colors = listOf(
@@ -147,18 +144,26 @@ fun HomeScreen() {
                                 )
                                 .padding(top = 5.dp, bottom = 5.dp, start = 15.dp, end = 15.dp)
                             ){
-                            Text("Thu, 22 Feb", fontSize = 15.sp, textAlign = TextAlign.Start, fontWeight = FontWeight.Medium)
+                            Text(formattedDate, fontSize = 15.sp, textAlign = TextAlign.Start, fontWeight = FontWeight.Medium)
                         }
                     }
                     //shetchik
                     Spacer(modifier = Modifier.padding(10.dp))
                     Column(horizontalAlignment = Alignment.CenterHorizontally){
                         Text("YOU HAVEN’T SMOKED FOR", fontSize = 15.sp, textAlign = TextAlign.Start, fontWeight = FontWeight.Medium)
-                        Text("5 Days", fontSize = 60.sp, textAlign = TextAlign.Start, fontWeight = FontWeight.ExtraBold)
-                        Text("5d:16h:48m:32s", fontSize = 15.sp, textAlign = TextAlign.Start, fontWeight = FontWeight.Medium)
+                        Text("1 Day", fontSize = 60.sp, textAlign = TextAlign.Start, fontWeight = FontWeight.ExtraBold)
+                        Text("1d:08h:48m:32s", fontSize = 15.sp, textAlign = TextAlign.Start, fontWeight = FontWeight.Medium)
                     }
+                    Image(
+                        painter = painterResource(id = R.drawable.plant),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(200.dp, 200.dp) // Set the image size
+                            .padding(16.dp), // Optional padding around the image
+                        alignment = Alignment.Center // Optional alignment
+                    )
 
-                    DashboardCard()
+                    DashboardCard(viewModel)
                 }
 //                Calendar(viewModel)
 
@@ -169,8 +174,8 @@ fun HomeScreen() {
     }
 
 @Composable
-fun DashboardCard(){
-    val progress = 0.6f
+fun DashboardCard(viewModel:HomeViewModel){
+    val progress = 0.1f
     var showBottomSheet = remember {
         mutableStateOf(false)
     }
@@ -204,7 +209,7 @@ fun DashboardCard(){
                 .padding(20.dp)
                 .fillMaxSize()){
                 Text(
-                    text = "You have smoked 6 cigarettes out of 10",
+                    text = "You have smoked 1 cigarette(s) out of 10",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center
@@ -242,7 +247,7 @@ fun DashboardCard(){
         }
 
         if(showBottomSheet.value){
-            BottomSheet()
+            BottomSheet(viewModel)
         }
     }
 }
@@ -250,7 +255,7 @@ fun DashboardCard(){
 //@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet() {
+fun BottomSheet(viewModel:HomeViewModel) {
     var sliderPosition by remember { mutableFloatStateOf(0f) }
     val modalBottomSheet = rememberModalBottomSheetState()
     ModalBottomSheet(
@@ -259,11 +264,15 @@ fun BottomSheet() {
         sheetState = modalBottomSheet,
         dragHandle = {BottomSheetDefaults.DragHandle()},
         content = {
-            Column(modifier = Modifier.padding(start=25.dp, end=25.dp).fillMaxWidth()) {
+            Column(modifier = Modifier
+                .padding(start = 25.dp, end = 25.dp)
+                .fillMaxWidth()) {
                 Text(text = "I've smoked", fontSize = 25.sp, fontWeight = FontWeight.Bold)
 
                 // counter
                 Box(){}
+
+                CounterCard(viewModel)
 
                 Spacer(modifier = Modifier.padding(10.dp))
                 Text(text = "How strong was your craving?", fontSize=20.sp)
@@ -290,7 +299,9 @@ fun BottomSheet() {
                     })
                 }
                 Column(
-                    modifier = Modifier.fillMaxWidth().height(120.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp),
                     verticalArrangement = Arrangement.Bottom,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
@@ -306,192 +317,35 @@ fun BottomSheet() {
     )
 }
 
-//
-//@Composable
-//fun PersonalInfo(){
-//    Column (modifier = Modifier
-//        .padding(20.dp)){
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(top = 5.dp)
-//        ){
-//            Text(
-//                text = "Personalised for you",
-//                textAlign = TextAlign.Start,
-//                fontSize = 30.sp,
-//                color = Color.Black
-//            )
-//        }
-//        Column ( ) {
-//            Row (modifier = Modifier
-//                .fillMaxWidth()){
-//                Card(modifier = Modifier.size(150.dp)){
-//                    Box(
-//                        modifier = Modifier
-//                    ){
-//                        Text(
-//                            text = "Personalised for you",
-//                            textAlign = TextAlign.Start,
-//                            fontSize = 10.sp,
-//                            color = Color.Black
-//                        )
-//                    }
-//                }
-//                Card(modifier = Modifier.size(150.dp)){
-//                    Box(
-//                        modifier = Modifier
-//                    ){
-//                        Text(
-//                            text = "Personalised for you",
-//                            textAlign = TextAlign.Start,
-//                            fontSize = 10.sp,
-//                            color = Color.Black
-//                        )
-//                    }
-//                }
-//            }
-//
-//        }
-//
-//    }
-//}
-//@Composable
-//fun Calendar(viewModel:HomeViewModel){
-//
-//    Column{
-//        Column (){
-//            Box(){
-//                Image(
-//                    contentDescription = "sun", painter = painterResource(id = R.drawable.sun),
-//                    contentScale = ContentScale.Fit,
-//                    modifier = Modifier.fillMaxWidth(),
-//                )
-//                Column(
-//                    horizontalAlignment = Alignment.CenterHorizontally
-//                ) {
-//                    Row (verticalAlignment = Alignment.CenterVertically){
-////                        Button(onClick = onSelectYesterday,
-////                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF2F4F7),
-////                                contentColor = Color(0xFF072100)
-////                            ),
-////                            modifier = Modifier.size(width = 50.dp, height = 50.dp)
-//////               shape = RoundedCornerShape(40.dp),
-////
-////                        ) {
-////                            Text("<")
-////                        }
-////
-////                        Button(onClick = onSelectTomorrow,
-////                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF2F4F7),
-////                                contentColor = Color(0xFF072100)
-////                            ),
-//////               shape = RoundedCornerShape(40.dp),
-////                            modifier = Modifier.size(width = 50.dp, height = 50.dp)
-////                        ) {
-////                            Text(">")
-////                        }
-//                        Text(
-//                            text = viewModel.selectedDay.value.label,
-//                            modifier = Modifier.padding(start = 10.dp, end = 10.dp)
-//                        )
-//                    }
-//                    Column {
-//                        Box(
-//                            contentAlignment = Alignment.Center,
-//                            modifier = Modifier.fillMaxWidth()
-//                        ){
-//                            Text(
-//                                text = viewModel.selectedDay.value.day,
-//                                textAlign = TextAlign.Center,
-//                                fontWeight = FontWeight.Bold,
-//                                fontSize = 20.sp,
-////                            modifier = Modifier.padding(top = 5.dp)
-//                            )
-//                        }
-//                        Box(
-//                            contentAlignment = Alignment.Center,
-//                            modifier = Modifier.fillMaxWidth()
-//                        ){
-//                            Text(
-//                                text = viewModel.selectedDay.value.dayOfWeek,
-//                                textAlign = TextAlign.Center,
-//                                color = Color(0xFF79747E),
-//                                fontSize = 15.sp,
-//                                modifier = Modifier.padding(top = 10.dp, bottom = 25.dp)
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        Column(
-//            Modifier
-//                .padding(20.dp)
-//                .clip(RoundedCornerShape(60.dp))){
-//
-//            CounterCard(viewModel)
-//        }
-//
-//    }
-//}
-//@Composable
-//fun CounterCard(viewModel:HomeViewModel){
-//    Box (Modifier.background(Color(0xFF9DD67D)))
-//    {
-//
-//        Column() {
-//            Box(
-//                contentAlignment = Alignment.Center,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(top = 20.dp)
-//            ){
-//                Text(
-//                    text = "I smoked today",
-//                    textAlign = TextAlign.Center,
-//                    fontSize = 30.sp
-//                )
-//            }
-//            Box(
-//                contentAlignment = Alignment.Center,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(20.dp)
-//            ){
-//
-//                Text(
-//                    text = viewModel.selectedDay.value.counter.toString(),
-//                    textAlign = TextAlign.Center,
-//                    fontSize = 50.sp,
-//                    fontWeight = FontWeight.Bold
-//                )
-//            }
-//            Box(
-//                contentAlignment = Alignment.Center,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .background(Color(0xFF9DD67D))
-//                    .padding(bottom = 30.dp)
-//            ){
-////                var valueCounter by remember {
-////                    mutableIntStateOf(0)
-////                }
+@Composable
+fun CounterCard(viewModel:HomeViewModel){
+    Box (modifier = Modifier.padding(10.dp))
+    {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 30.dp)
+            ){
 //                viewModel.retrieveCounterFromFirestore()
-//                var valueCounter = viewModel.selectedDay.value.counter as? Long
-//                CounterButton(value =viewModel.selectedDay.value.counter.toString(),
-//                    onValueIncreaseClick = {
-//                        viewModel.updateCounterForSelectedDay(valueCounter?.plus(1) ?: 0)
-//                    },
-//                    onValueDecreaseClick = {
-//                        viewModel.updateCounterForSelectedDay(maxOf(valueCounter?.minus(1) ?: 0, 0))
-//                    },
-//                    onValueClearClick = {
-//                        valueCounter = 0
-//                    })
-//            }
-//        }
-//    }
-//}
+                var valueCounter by remember {
+                    mutableIntStateOf(0)
+                }
+                CounterButton(value = valueCounter.toString(),
+                    onValueIncreaseClick = {
+                        valueCounter += 1
+                        println(valueCounter)
+//                        viewModel.updateCounterForSelectedDay(valueCounter.plus(1) ?: 0)
+                    },
+                    onValueDecreaseClick = {
+                        valueCounter = maxOf(valueCounter - 1, 0)
+//                        viewModel.updateCounterForSelectedDay(maxOf(valueCounter.minus(1) ?: 0, 0))
+                    },
+                    onValueClearClick = {
+                        valueCounter = 0
+                    })
+            }
+    }
+}
 
 
