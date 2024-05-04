@@ -81,7 +81,7 @@ fun SmokingApp() {
             ) {
 
                 composable(BottomNavItem.Home.route){
-                    HomeScreen()
+                    HomeScreen(HomeViewModel())
                 }
                 composable(BottomNavItem.Statistics.route){
                     StatisticsScreen()
