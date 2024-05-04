@@ -23,8 +23,6 @@ class HomeViewModel : ViewModel() {
     val auth = Firebase.auth
     val curUser = auth.currentUser
 
-    private val db = Firebase.firestore
-//    private val userCollection = db.collection("use")
     fun retrieveCounterFromFirestore() {
         val selectedDateString = selectedDay.value.localDate.format(DateTimeFormatter.ISO_DATE)
         var userId:String = ""
@@ -36,58 +34,12 @@ class HomeViewModel : ViewModel() {
             val endOfDay = Date.from(d.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().minusMillis(1))
 
             // Perform the query
-            db.collection("users").document(userId).collection("smokeFreeDays")
-                .whereGreaterThanOrEqualTo("date", startOfDay)
-                .whereLessThan("date", endOfDay)
-                .get()
-                .addOnSuccessListener { querySnapshot ->
-                    if (querySnapshot.isEmpty) {
-                        println("No documents found for yesterday.")
-                    } else {
-                        val temp = querySnapshot.documents[0].get("cigarettesSmoked") as? Long
-                        println("$temp")
-
-                        _selectedDay.value = selectedDay.value.copy(counter = temp)
-
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    println("Error getting documents: $exception")
-                }
+            }
         }
-        }
-
-    fun getStreak(){
-        var userId:String = ""
-        curUser?.run {
-            userId = uid
-        }
-        viewModelScope.launch {
-            val temp = db.collection("users").document(userId).get().await()
-            val s = temp.data?.get("streak") as? String ?: "0"
-            _selectedDay.value = selectedDay.value.copy(streak = s)
-        }
-    }
-    fun updateCounterForSelectedDay(newValue: Long) {
-        val selectedDateString = selectedDay.value.localDate.format(DateTimeFormatter.ISO_DATE)
-        var userId:String = ""
-        curUser?.run {
-            userId = uid
-        }
-        viewModelScope.launch {
-            // Perform the query
-            db.collection("users").document(userId).collection("smokeFreeDays")
-                .document(selectedDateString).update("cigarettesSmoked", newValue)
-                .addOnSuccessListener {
-                    _selectedDay.value = selectedDay.value.copy(counter = newValue)
-                    println("Success")
-                }
-                .addOnFailureListener { exception ->
-                    println("Error getting documents: $exception")
-                }
-        }
-    }
 }
+
+
+
 
 private fun formTime(d: LocalDate): List<String> {
     val formatDay = d.format(DateTimeFormatter.ofPattern("dd EEE"))

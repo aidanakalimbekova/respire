@@ -19,6 +19,7 @@ import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,8 +29,6 @@ data class Profile(
     val name: String,
     val username: String,
     val pic: String,
-    val listFriends: List<FriendProfile>,
-    val invitations: List<InvitationProfile>,
 )
 
 data class FriendProfile(
@@ -43,12 +42,14 @@ sealed class ProfileState {
     data class Success(val profile: Profile) : ProfileState()
     data class Error(val message: String) : ProfileState()
 }
-class ProfileViewModel : ViewModel(){
+class ProfileViewModel : ViewModel() {
 
-    private val _profileState: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState.Loading)
+    private val _profileState: MutableStateFlow<ProfileState> =
+        MutableStateFlow(ProfileState.Loading)
     val profileState: StateFlow<ProfileState> = _profileState
     private val apiService = RetrofitClient.apiService
     private val id = Firebase.auth.currentUser!!.uid
+
     init {
 //        _profileState.value = ProfileState.Loading
         fetchUserProfile()
@@ -58,26 +59,17 @@ class ProfileViewModel : ViewModel(){
         viewModelScope.launch {
 //            _profileState.value = ProfileState.Loading
             try {
+                delay(500)
                 val userProfile = getUserProfile(id)
                 println("some $id")
-                val userFriends = getUserFriends()
-                println("some ll ${userProfile.avatar}")
-//                val userInvitations = getUserInvitations()
-//                println("some rr $userInvitations")
                 _profileState.value = ProfileState.Success(
                     Profile(
                         userProfile.name,
                         userProfile.username,
                         userProfile.avatar,
-                        userFriends.map { friend ->
-                            FriendProfile(
-                                friend.name,
-                                friend.username,
-                                friend.avatar
-                            )
-                        },
-                        emptyList()
-//                        processInvitations(userInvitations)
+
+//                        emptyList()
+
                     )
                 )
             } catch (e: Exception) {
@@ -88,7 +80,6 @@ class ProfileViewModel : ViewModel(){
     }
 
     private suspend fun getUserProfile(idUser: String): User {
-//        val id = Firebase.auth.currentUser!!.uid
         val response = apiService.getUserById(idUser)
         println("getUserProfile ${response.body()}")
         if (response.isSuccessful) {
@@ -99,53 +90,4 @@ class ProfileViewModel : ViewModel(){
         }
     }
 
-    private suspend fun getUserFriends(): List<FriendX> {
-        val response = apiService.getFriends()
-        println("some lo ${response.body()}")
-        if (response.isSuccessful) {
-//            println("some lo ${response.body()}")
-            return response.body()?.friends ?: listOf()
-        } else {
-            println("Failed")
-            throw Exception("Failed to fetch user friends")
-        }
-    }
-
-    private suspend fun getUserInvitations(): List<Invitation> {
-        val response = apiService.getInvitations()
-        if (response.isSuccessful) {
-            return response.body() ?: listOf()
-        } else {
-            println("Failed inv")
-            throw Exception("Failed to fetch user invitations")
-        }
-    }
-
-    private suspend fun processInvitations(invitations: List<Invitation>): List<InvitationProfile> {
-        val processedInvitations = mutableListOf<InvitationProfile>()
-        invitations.forEach { invitation ->
-            try {
-                val user = getUserProfile(invitation.fromUserId)
-                processedInvitations.add(
-                    InvitationProfile(
-                        user.avatar,
-                        user.name,
-                        user.username
-                    )
-                )
-            } catch (e: Exception) {
-                // Handle error fetching user details for invitation
-                println("Failed process")
-            }
-        }
-        return processedInvitations
-    }
-
 }
-
-
-data class InvitationProfile(
-    val avatar: String,
-    val name: String,
-    val username: String
-)

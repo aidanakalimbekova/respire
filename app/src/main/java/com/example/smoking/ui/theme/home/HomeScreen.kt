@@ -90,46 +90,67 @@ import java.time.LocalDate
 
 //@Preview
 @Composable
-fun HomeScreen(viewModel:HomeViewModel){
+fun HomeScreen(viewModel: HomeViewModel) {
     val auth = Firebase.auth
     val curUser = auth.currentUser
 
-        Column(){
-            var name:String? = "j"
-            curUser?.run {
-                name = curUser.displayName
-            }
-            viewModel.getStreak()
-            Column (horizontalAlignment = Alignment.CenterHorizontally){
-                Column (Modifier.background(Color(0XFFCDEFF3))){
-                    Row (verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start, modifier = Modifier.padding(20.dp), )
-                    {
-                        Text("Hey, ", fontSize = 25.sp, textAlign = TextAlign.Start)
-                        Text("$name", fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.Bottom,){
-                            Icon(Icons.Filled.LocalFireDepartment, contentDescription =  "strike", tint = Color(0xFFFF5722) )
-                            Text(viewModel.selectedDay.value.streak, fontSize = 20.sp, modifier = Modifier.padding(start = 4.dp))
-                        }
+    Column() {
+        var name: String? = "j"
+        curUser?.run {
+            name = curUser.displayName
+        }
+//        viewModel.getStreak()
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(Modifier.background(Color(0XFFCDEFF3))) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start, modifier = Modifier.padding(20.dp),
+                )
+                {
+                    Text("Hey, ", fontSize = 25.sp, textAlign = TextAlign.Start)
+                    Text(
+                        "$name",
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.Bottom,
+                    ) {
+                        Icon(
+                            Icons.Filled.LocalFireDepartment,
+                            contentDescription = "strike",
+                            tint = Color(0xFFFF5722)
+                        )
+                        Text(
+                            viewModel.selectedDay.value.streak,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
                     }
                 }
-                Calendar(viewModel)
+            }
+            Calendar(viewModel)
 
 //                PersonalInfo()
-            }
-
         }
+
     }
+}
 
 @Composable
-fun PersonalInfo(){
-    Column (modifier = Modifier
-        .padding(20.dp)){
+fun PersonalInfo() {
+    Column(
+        modifier = Modifier
+            .padding(20.dp)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 5.dp)
-        ){
+        ) {
             Text(
                 text = "Personalised for you",
                 textAlign = TextAlign.Start,
@@ -137,13 +158,15 @@ fun PersonalInfo(){
                 color = Color.Black
             )
         }
-        Column ( ) {
-            Row (modifier = Modifier
-                .fillMaxWidth()){
-                Card(modifier = Modifier.size(150.dp)){
+        Column() {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Card(modifier = Modifier.size(150.dp)) {
                     Box(
                         modifier = Modifier
-                    ){
+                    ) {
                         Text(
                             text = "Personalised for you",
                             textAlign = TextAlign.Start,
@@ -152,10 +175,10 @@ fun PersonalInfo(){
                         )
                     }
                 }
-                Card(modifier = Modifier.size(150.dp)){
+                Card(modifier = Modifier.size(150.dp)) {
                     Box(
                         modifier = Modifier
-                    ){
+                    ) {
                         Text(
                             text = "Personalised for you",
                             textAlign = TextAlign.Start,
@@ -170,12 +193,13 @@ fun PersonalInfo(){
 
     }
 }
-@Composable
-fun Calendar(viewModel:HomeViewModel){
 
-    Column{
-        Column (){
-            Box(){
+@Composable
+fun Calendar(viewModel: HomeViewModel) {
+
+    Column {
+        Column() {
+            Box() {
                 Image(
                     contentDescription = "sun", painter = painterResource(id = R.drawable.sun),
                     contentScale = ContentScale.Fit,
@@ -184,7 +208,7 @@ fun Calendar(viewModel:HomeViewModel){
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Row (verticalAlignment = Alignment.CenterVertically){
+                    Row(verticalAlignment = Alignment.CenterVertically) {
 //                        Button(onClick = onSelectYesterday,
 //                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF2F4F7),
 //                                contentColor = Color(0xFF072100)
@@ -214,7 +238,7 @@ fun Calendar(viewModel:HomeViewModel){
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxWidth()
-                        ){
+                        ) {
                             Text(
                                 text = viewModel.selectedDay.value.day,
                                 textAlign = TextAlign.Center,
@@ -226,7 +250,7 @@ fun Calendar(viewModel:HomeViewModel){
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxWidth()
-                        ){
+                        ) {
                             Text(
                                 text = viewModel.selectedDay.value.dayOfWeek,
                                 textAlign = TextAlign.Center,
@@ -242,16 +266,18 @@ fun Calendar(viewModel:HomeViewModel){
         Column(
             Modifier
                 .padding(20.dp)
-                .clip(RoundedCornerShape(60.dp))){
+                .clip(RoundedCornerShape(60.dp))
+        ) {
 
             CounterCard(viewModel)
         }
 
     }
 }
+
 @Composable
-fun CounterCard(viewModel:HomeViewModel){
-    Box (Modifier.background(Color(0xFF9DD67D)))
+fun CounterCard(viewModel: HomeViewModel) {
+    Box(Modifier.background(Color(0xFF9DD67D)))
     {
 
         Column() {
@@ -260,7 +286,7 @@ fun CounterCard(viewModel:HomeViewModel){
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 20.dp)
-            ){
+            ) {
                 Text(
                     text = "I smoked today",
                     textAlign = TextAlign.Center,
@@ -272,7 +298,7 @@ fun CounterCard(viewModel:HomeViewModel){
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
-            ){
+            ) {
 
                 Text(
                     text = viewModel.selectedDay.value.counter.toString(),
@@ -287,18 +313,18 @@ fun CounterCard(viewModel:HomeViewModel){
                     .fillMaxWidth()
                     .background(Color(0xFF9DD67D))
                     .padding(bottom = 30.dp)
-            ){
+            ) {
 //                var valueCounter by remember {
 //                    mutableIntStateOf(0)
 //                }
                 viewModel.retrieveCounterFromFirestore()
                 var valueCounter = viewModel.selectedDay.value.counter as? Long
-                CounterButton(value =viewModel.selectedDay.value.counter.toString(),
+                CounterButton(value = viewModel.selectedDay.value.counter.toString(),
                     onValueIncreaseClick = {
-                        viewModel.updateCounterForSelectedDay(valueCounter?.plus(1) ?: 0)
+//                        viewModel.updateCounterForSelectedDay(valueCounter?.plus(1) ?: 0)
                     },
                     onValueDecreaseClick = {
-                        viewModel.updateCounterForSelectedDay(maxOf(valueCounter?.minus(1) ?: 0, 0))
+//                        viewModel.updateCounterForSelectedDay(maxOf(valueCounter?.minus(1) ?: 0, 0))
                     },
                     onValueClearClick = {
                         valueCounter = 0

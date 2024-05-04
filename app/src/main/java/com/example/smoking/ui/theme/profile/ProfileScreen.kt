@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.outlined.FileCopy
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -52,8 +54,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
 import coil.network.HttpException
@@ -64,7 +68,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel){
+fun ProfileScreen(viewModel: ProfileViewModel, onClick: () -> Unit, onFriends: () -> Unit, onRequests: () -> Unit){
     val profileState by viewModel.profileState.collectAsStateWithLifecycle()
     when (val state = profileState) {
         is ProfileState.Loading -> {
@@ -74,7 +78,7 @@ fun ProfileScreen(viewModel: ProfileViewModel){
         is ProfileState.Success -> {
             val profile = state.profile
             // Display profile information
-            ProfileContent(profile)
+            ProfileContent(profile, onClick, onFriends, onRequests)
         }
         is ProfileState.Error -> {
             // Show error message
@@ -85,7 +89,7 @@ fun ProfileScreen(viewModel: ProfileViewModel){
 }
 
 @Composable
-fun ProfileContent(profile: Profile){
+fun ProfileContent(profile: Profile, onClick: () -> Unit, onFriends: () -> Unit, onRequests: () -> Unit){
     Column(){
         Column (horizontalAlignment = Alignment.Start){
             Column (modifier = Modifier.padding(20.dp)){
@@ -106,57 +110,44 @@ fun ProfileContent(profile: Profile){
                     }
                 }
 
-                Text(profile.username, fontSize = 15.sp, fontWeight = FontWeight.Normal, textAlign = TextAlign.Start)
+                Text("@${profile.username}", fontSize = 15.sp, fontWeight = FontWeight.Normal, textAlign = TextAlign.Start)
 
+                Row(horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically){
+                    Button(
+                        onClick = onFriends,
+                        modifier = Modifier
+                            .padding(top = 5.dp),
+//                            .fillMaxWidth(),
+                        contentPadding = PaddingValues(1.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(Color.Transparent)
+                    ) {
+                        Text("Friends", fontSize = 20.sp)
+                    }
+//                    Spacer(Modifier.width(20.dp))
 
-                Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = onRequests,
+                        modifier = Modifier
+                            .padding(top = 5.dp)
+                            .fillMaxWidth(),
+                        contentPadding = PaddingValues(1.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(Color.Transparent)
+                    ) {
+                        Text("Requests", fontSize = 20.sp)
+                    }
+
+                }
+
+                Button(onClick = onClick, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 5.dp)) {
                     Text(text = "Add a friend")
                 }
-            }
-        }
-    }
-}
 
-@Composable
-fun ListFriends(){
-    LazyColumn(){
-//        items(s, key = { it.friendId }) { invitation ->
-//            Box(){
-//                Row (modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(bottom = 20.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
-//                    AsyncImage(
-//                        model = invitation.photoUrl,
-//                        contentDescription = "Profile picture",
-//                        modifier = Modifier
-//                            .size(30.dp)
-//                            .clip(CircleShape),
-//                        contentScale = ContentScale.Crop
-//                    )
-//                    Spacer(Modifier.width(20.dp))
-//                    Box(Modifier.width(80.dp)){
-//                        Text(invitation.name)
-//                    }
-//                    Spacer(Modifier.width(30.dp))
-//                    TextButton(
-//                        modifier = Modifier
-//                            .height(40.dp)
-//                            .width(70.dp),
-//                        onClick = { viewModel.handleInv(false, invitation.friendId) }) {
-//                        Text("Ignore", fontSize = 10.sp)
-//                    }
-//
-//                    Spacer(Modifier.width(5.dp))
-//                    OutlinedButton(
-//                        modifier = Modifier
-//                            .height(30.dp)
-//                            .width(90.dp),
-//                        onClick = { viewModel.handleInv(true, invitation.friendId) }) {
-//                        Text("Accept", fontSize = 10.sp)
-//                    }
-//                }
-//            }
-//        }
+
+            }
+
+        }
     }
 }
 

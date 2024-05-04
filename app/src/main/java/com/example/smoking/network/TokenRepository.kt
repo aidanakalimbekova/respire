@@ -27,7 +27,7 @@ class TokenRepository {
             try {
                 val newToken = FirebaseAuth.getInstance().currentUser?.getIdToken(true)?.await()?.token
                 _token.value = newToken
-                println(newToken)
+//                println(newToken)
             } catch (e: Exception) {
                 // Handle exceptions, possibly with exponential backoff
             }

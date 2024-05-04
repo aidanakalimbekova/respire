@@ -9,12 +9,5 @@ data class Friend(
     @SerializedName("username")val username: String
 )
 
-data class Invitation(
-    @SerializedName("from_user_id")val fromUserId: String,
-    @SerializedName("id")val id: String,
-    @SerializedName("sent_date")val sentDate: String,
-    @SerializedName("status")val status: String,
-    @SerializedName("to_user_id") val toUserId: String
-)
 
 

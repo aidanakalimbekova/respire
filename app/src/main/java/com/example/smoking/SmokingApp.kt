@@ -36,6 +36,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.smoking.ui.theme.SmokingTheme
 import com.example.smoking.ui.theme.home.HomeScreen
 import com.example.smoking.ui.theme.home.HomeViewModel
+import com.example.smoking.ui.theme.profile.AddFriendScreen
+import com.example.smoking.ui.theme.profile.AddFriendViewModel
+import com.example.smoking.ui.theme.profile.FriendsScreen
+import com.example.smoking.ui.theme.profile.FriendsViewModel
+import com.example.smoking.ui.theme.profile.InvitationsScreen
+import com.example.smoking.ui.theme.profile.InvitationsViewModel
 import com.example.smoking.ui.theme.profile.ProfileScreen
 import com.example.smoking.ui.theme.profile.ProfileViewModel
 import com.example.smoking.ui.theme.quest.LineChartViewModel
@@ -80,7 +86,16 @@ fun SmokingApp() {
                     QuestScreen(LineChartViewModel())
                 }
                 composable(BottomNavItem.Profile.route){
-                    ProfileScreen(ProfileViewModel())
+                    ProfileScreen(ProfileViewModel(), onClick = { smokeNavController.navigate("addfriend") }, onFriends = { smokeNavController.navigate("friends") }, onRequests = {smokeNavController.navigate("invitations") })
+                }
+                composable("addfriend") {
+                    AddFriendScreen(onClick = { smokeNavController.navigate("profile") }, AddFriendViewModel())
+                }
+                composable("friends") {
+                    FriendsScreen(onClick = { smokeNavController.navigate("profile") }, FriendsViewModel())
+                }
+                composable("invitations") {
+                    InvitationsScreen(onClick = { smokeNavController.navigate("profile") }, InvitationsViewModel())
                 }
             }
         }
