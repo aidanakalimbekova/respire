@@ -80,4 +80,12 @@ interface RespireApiService {
     @GET("sessions/stat")
     suspend fun getStat(): Response<Stat>
 
+    @POST("ai-assistant/recommendations")
+    suspend fun postRecommendations(
+        @Body context: GeminiPut
+    ): Response<Unit>
+
+    @GET("ai-assistant/recommendations")
+    suspend fun getRecommendations(): Response<Recommendations>
+
 }

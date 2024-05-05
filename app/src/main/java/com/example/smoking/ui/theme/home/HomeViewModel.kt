@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.smoking.network.GeminiPut
 import com.example.smoking.network.RetrofitClient
 import com.example.smoking.network.SessionPut
 import com.example.smoking.network.User
@@ -71,6 +72,26 @@ class HomeViewModel : ViewModel() {
             }
         }
     }
+
+    fun postRec(craving: Int, mood: String, context: String ) {
+        viewModelScope.launch {
+            try {
+                println("Here I am")
+                val res = RetrofitClient.apiService.postRecommendations(
+                    GeminiPut(craving, mood, context)
+                )
+                if (res.isSuccessful) {
+                    println("ok")
+                } else {
+                    val errorMessage = res.errorBody()?.charStream()?.readText()
+                    println("Error search: ${res.code()} - $errorMessage")
+                }
+            } catch (e: Exception) {
+                println(e.message)
+            }
+        }
+    }
+
     fun saveCounterValue() {
         println("Saving counter value: ${_counterValue.value}")
         viewModelScope.launch {

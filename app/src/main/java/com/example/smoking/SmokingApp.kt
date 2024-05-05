@@ -1,6 +1,7 @@
 package com.example.smoking
 
 import android.app.Activity.RESULT_OK
+import android.graphics.pdf.PdfDocument.Page
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -34,6 +35,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.smoking.ui.theme.SmokingTheme
+import com.example.smoking.ui.theme.gemini.PageScreen
+import com.example.smoking.ui.theme.gemini.PageViewModel
 import com.example.smoking.ui.theme.home.HomeScreen
 import com.example.smoking.ui.theme.home.HomeViewModel
 import com.example.smoking.ui.theme.profile.AddFriendScreen
@@ -62,7 +65,7 @@ import kotlin.coroutines.coroutineContext
 
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val label: String) {
     object Home : BottomNavItem("home", Icons.Default.Home, "Home")
-    object Statistics : BottomNavItem("statistics", Icons.Default.Insights, "Statistics")
+//    object Statistics : BottomNavItem("statistics", Icons.Default.Insights, "Statistics")
     object Quest : BottomNavItem("quest", Icons.Default.Leaderboard, "Quest")
     object Profile : BottomNavItem("profile", Icons.Default.Person, "Profile")
 }
@@ -81,11 +84,11 @@ fun SmokingApp() {
             ) {
 
                 composable(BottomNavItem.Home.route){
-                    HomeScreen(HomeViewModel())
+                    HomeScreen(HomeViewModel(), navController = smokeNavController)
                 }
-                composable(BottomNavItem.Statistics.route){
-                    StatisticsScreen()
-                }
+//                composable(BottomNavItem.Statistics.route){
+//                    StatisticsScreen()
+//                }
                 composable(BottomNavItem.Quest.route){
                     QuestScreen(LineChartViewModel(), onClick = { smokeNavController.navigate("createQuest") }, navController = smokeNavController)
                 }
@@ -112,9 +115,9 @@ fun SmokingApp() {
                         viewModel = ChallengeDetailViewModel(challengeId)
                     )
                 }
-//                composable("leaderboard/{challengeId}") { backStackEntry ->
-//                    LeaderboardScreen(onClick = {smokeNavController.navigate("quest")})
-//                }
+                composable("gemini") {
+                    PageScreen(navController = smokeNavController, PageViewModel())
+                }
             }
             }
         }
@@ -126,7 +129,7 @@ fun SmokingApp() {
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         BottomNavItem.Home,
-        BottomNavItem.Statistics,
+//        BottomNavItem.Statistics,
         BottomNavItem.Quest,
         BottomNavItem.Profile,
     )

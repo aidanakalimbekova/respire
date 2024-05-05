@@ -19,19 +19,25 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.LocalFireDepartment
@@ -54,9 +60,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.SmallFloatingActionButton
@@ -88,7 +96,9 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -97,7 +107,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.smoking.R
 import com.example.smoking.ui.theme.profile.ErrorScreen
 import com.example.smoking.ui.theme.profile.LoadingScreen
@@ -115,7 +127,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(viewModel: HomeViewModel, navController : NavController) {
 
     val currentDate = LocalDate.now()
     val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("E, d MMM"))
@@ -199,7 +211,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
                     alignment = Alignment.Center // Optional alignment
                 )
 
-                DashboardCard(viewModel)
+                DashboardCard(viewModel, navController)
             }
 //                Calendar(viewModel)
 
@@ -210,7 +222,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
 }
 
 @Composable
-fun DashboardCard(viewModel: HomeViewModel) {
+fun DashboardCard(viewModel: HomeViewModel, navController: NavController) {
     val progress = 0.1f
     var showBottomSheet = remember {
         mutableStateOf(false)
@@ -286,7 +298,7 @@ fun DashboardCard(viewModel: HomeViewModel) {
         }
 
         if (showBottomSheet.value) {
-            BottomSheet(viewModel, showBottomSheet)
+            BottomSheet(viewModel, showBottomSheet, navController)
         }
     }
 }
@@ -294,13 +306,24 @@ fun DashboardCard(viewModel: HomeViewModel) {
 //@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(viewModel: HomeViewModel,  b: MutableState<Boolean>) {
+fun BottomSheet(viewModel: HomeViewModel,  b: MutableState<Boolean>, navController: NavController) {
     var sliderPosition by remember { mutableFloatStateOf(0f) }
     val modalBottomSheet = rememberModalBottomSheetState()
+    var feel by remember {
+        mutableStateOf("")
+    }
+    var context by remember {
+        mutableStateOf("")
+    }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+//    val sheetState = rememberModalBottomSheetState()
+
     ModalBottomSheet(
-        modifier = Modifier.height(600.dp),
+        modifier = Modifier.fillMaxHeight(0.9f),
         onDismissRequest = { b.value = false },
         sheetState = modalBottomSheet,
+//        windowInsets = WindowInsets.ime,
         dragHandle = { BottomSheetDefaults.DragHandle() },
         content = {
             Column(
@@ -328,23 +351,33 @@ fun BottomSheet(viewModel: HomeViewModel,  b: MutableState<Boolean>) {
                             thumbColor = Color(0xFF41999E),
                         ),
                     )
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    Text(
+                        text = "How do you feel?",
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(bottom = 5.dp)
+                    )
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = feel,
+                        onValueChange = { newText ->
+                            feel = newText
+                        })
 
                     Spacer(modifier = Modifier.padding(5.dp))
                     Text(
-                        text = "How did you feel?",
+                        text = "What is triggering you?",
                         fontSize = 20.sp,
                         modifier = Modifier.padding(bottom = 5.dp)
                     )
 
-                    var text by remember {
-                        mutableStateOf("")
-                    }
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = text,
+                        value = context,
                         onValueChange = { newText ->
-                            text = newText
+                            context = newText
                         })
+                    Spacer(modifier = Modifier.padding(5.dp))
                 }
                 Column(
                     modifier = Modifier
@@ -354,7 +387,9 @@ fun BottomSheet(viewModel: HomeViewModel,  b: MutableState<Boolean>) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { viewModel.postRec(sliderPosition.toInt(), feel, context)
+                                  navController.navigate("gemini")
+                                  },
                         colors = ButtonDefaults.buttonColors(
                             contentColor = Color(0xFF041725),       // цвет текста
                             containerColor = Color(0xFF93F1F7)
@@ -410,8 +445,7 @@ fun CounterCard(viewModel: HomeViewModel) {
 
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp),
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
