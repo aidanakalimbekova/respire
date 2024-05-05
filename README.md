@@ -1,5 +1,7 @@
 # respire
-Comprises three integral components: a backend, a mobile application, and an AI-powered support system, all integrated seamlessly to operate efficiently.
+Our project, ‘respire.’, aims to address the issue of smoking addiction by fostering a collaborative and supportive environment around users. Recognizing that quitting smoking is a challenging endeavor that benefits greatly from encouragement and accountability, our project leverages the power of community and technology to create a unique support system for its users. 
+
+This project comprises three integral components: a backend, a mobile application, and an AI-powered support system, all integrated seamlessly to operate efficiently.
 
 Backend: Utilizes Firebase SDK for data storage and implementation of business logic through Firebase Authentication, Cloud Functions, and Go.
 Here's the backend side of the project, follow for more instructions if necessary: **https://github.com/Brainsoft-Raxat/respire-back**
