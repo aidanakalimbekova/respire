@@ -25,11 +25,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.FileCopy
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.SmokeFree
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FileCopy
 import androidx.compose.material3.Button
@@ -54,8 +56,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
@@ -104,17 +108,28 @@ fun ProfileScreen(viewModel: ProfileViewModel, onClick: () -> Unit, onFriends: (
 @Composable
 fun ProfileContent(profile: Profile, onClick: () -> Unit, onFriends: () -> Unit, onRequests: () -> Unit){
     Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
+        modifier = Modifier.verticalScroll(rememberScrollState()),
     ){
+        Spacer(modifier = Modifier.padding(20.dp))
         Column (horizontalAlignment = Alignment.Start){
             Column (modifier = Modifier.padding(20.dp)){
                 Box(){
-                    Row(){
-                        Text(profile.name, fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
-//                        Spacer(Modifier.width(150.dp))
-
-                        AsyncImage(
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
+                        Column() {
+                            Text(
+                                profile.name,
+                                fontSize = 25.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Start
+                            )
+                            Text(
+                                "@${profile.username}",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Normal,
+                                textAlign = TextAlign.Start
+                            )
+                        }
+                            AsyncImage(
                             model = profile.pic,
                             contentDescription = "Profile picture",
                             modifier = Modifier
@@ -125,8 +140,6 @@ fun ProfileContent(profile: Profile, onClick: () -> Unit, onFriends: () -> Unit,
 
                     }
                 }
-
-                Text("@${profile.username}", fontSize = 15.sp, fontWeight = FontWeight.Normal, textAlign = TextAlign.Start)
 
                 Row(horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically){
                     Button(
@@ -169,20 +182,25 @@ fun ProfileContent(profile: Profile, onClick: () -> Unit, onFriends: () -> Unit,
             .fillMaxSize()
             .padding(16.dp)
             .background(Color.White),
-//        .background(
-//            brush = Brush.verticalGradient(
-//                colors = listOf(
-//                    Color(0xFF93F1F7),
-//                    Color(0xFFF6DF67),
-//                )
-//            )
-//        ),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
+            Spacer(modifier = Modifier.padding(5.dp))
+            Text(
+                text = "Progress",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+            Spacer(modifier = Modifier.padding(2.dp))
             Row(){
-                StatisticCard()
-                StatisticCard()
-                StatisticCard()
+                StatisticCard(value = "950₸", field = "money saved", icon = Icons.Default.Payments, color = Color(0xFFFFC658))
+                StatisticCard(value = "3d", field = "smoke free", icon = Icons.Default.SmokeFree, color = Color(
+                    0xFF5CC2F1
+                )
+                )
+                StatisticCard(value = "1d", field = "life regained", icon = Icons.Default.AccessTime, color = Color(
+                    0xFF80D163
+                )
+                )
             }
             com.example.smoking.ui.theme.statistics.CigaretteProgressBox(progress = 0.7f)
 
@@ -194,16 +212,16 @@ fun ProfileContent(profile: Profile, onClick: () -> Unit, onFriends: () -> Unit,
             )
             Column(modifier = Modifier.padding(5.dp)){
                 Row(){
-                    HealthCard(title = "Progress", progress = 0.75f)
-                    HealthCard(title = "Progress", progress = 0.75f)
+                    HealthCard(title = "Blood Circulation", progress = 0.5f)
+                    HealthCard(title = "Blood Pressure", progress = 0.75f)
                 }
                 Row(){
-                    HealthCard(title = "Progress", progress = 0.75f)
-                    HealthCard(title = "Progress", progress = 0.75f)
+                    HealthCard(title = "Oxygen Level", progress = 0.75f)
+                    HealthCard(title = "Nicotine Level", progress = 0.43f)
                 }
                 Row(){
-                    HealthCard(title = "Progress", progress = 0.75f)
-                    HealthCard(title = "Progress", progress = 0.75f)
+                    HealthCard(title = "Pulse Rate", progress = 0.75f)
+                    HealthCard(title = "Lung function", progress = 0.65f)
                 }
             }
         }
@@ -252,9 +270,6 @@ fun ListFriends(){
 //        }
     }
 }
-
-
-
 @Composable
 fun LoadingScreen() {
     Box(
@@ -267,7 +282,6 @@ fun LoadingScreen() {
         )
     }
 }
-
 @Composable
 fun ErrorScreen(errorMessage: String) {
     Box(
@@ -310,11 +324,7 @@ fun RowScope.HealthCard(title: String, progress: Float){
                 progress = progress,
                 strokeWidth = 10.dp,
                 modifier = Modifier.size(80.dp), // Set the size of the circular progress bar
-                color = when {
-                    progress <= 0.3f -> Color.Red // Red for low progress
-                    progress <= 0.6f -> Color.Yellow // Yellow for medium progress
-                    else -> Color(0xFF8BC34A) // Green for high progress
-                }
+                color = Color(0xFF8BC34A) // Green for high progress
             )
         }
     }
@@ -323,7 +333,7 @@ fun RowScope.HealthCard(title: String, progress: Float){
 fun CigaretteProgressBox(progress: Float) {
     Box(
         modifier = Modifier
-            .padding(top=10.dp, bottom = 10.dp, start=8.dp, end=8.dp)
+            .padding(top = 10.dp, bottom = 10.dp, start = 8.dp, end = 8.dp)
             .border(
                 border = BorderStroke(1.dp, Color.Gray),
                 shape = RoundedCornerShape(8.dp)
@@ -372,12 +382,12 @@ fun CigaretteProgressBox(progress: Float) {
 }
 
 @Composable
-fun RowScope.StatisticCard(){
+fun RowScope.StatisticCard(value: String, field: String, icon: ImageVector, color: Color){
     Box(
         modifier = Modifier
             .weight(1f)
             .padding(8.dp)
-            .height(150.dp)
+            .height(160.dp)
             .border(
                 border = BorderStroke(1.dp, Color.Gray),
                 shape = RoundedCornerShape(8.dp)
@@ -392,24 +402,25 @@ fun RowScope.StatisticCard(){
             verticalArrangement = Arrangement.Center
         ) {
             Icon(
-                imageVector = Icons.Default.Payments,
+                imageVector = icon,
                 contentDescription = "Icon",
                 modifier = Modifier
                     .size(50.dp)
-                    .background(color = Color(0xFFFFC658), shape = CircleShape)
+                    .background(color = color, shape = CircleShape)
                     .padding(10.dp),
                 tint = Color.White
             )
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "17$",
+                text = value,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Money Saved",
-                fontSize = 14.sp,
+                text = field,
+                fontSize = 16.sp,
+                lineHeight = 15.sp,
                 textAlign = TextAlign.Center
             )
         }

@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -55,7 +56,7 @@ fun AddFriendScreen(onClick: () -> Unit, viewModel: AddFriendViewModel) {
     val isLoading = viewModel.isLoading.value
     val invitationStatus = viewModel.invitationStatus.value
 
-    Column {
+    Column(modifier = Modifier.padding(10.dp)) {
         Row(horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.Top){
             Button(
                 onClick = onClick,
@@ -74,20 +75,21 @@ fun AddFriendScreen(onClick: () -> Unit, viewModel: AddFriendViewModel) {
             }
         }
 
-        Row (horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
-            Text("Invite a friend")
+        Row (modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
+            Text(text="Invite a friend", fontSize = 25.sp, fontWeight = FontWeight.Bold)
         }
+        Spacer(modifier = Modifier.padding(10.dp))
 
-        Row {
+        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
             OutlinedTextField(
                 value = message.value,
-                textStyle = TextStyle(fontSize=25.sp),
+                textStyle = TextStyle(fontSize=20.sp),
                 onValueChange = {newText -> message.value = newText}
             )
             Button(
                 onClick = { viewModel.searchUsers(message.value) },
                 shape = CircleShape,
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(30.dp),
                 contentPadding = PaddingValues(1.dp),
                 colors = ButtonDefaults.outlinedButtonColors(Color.Transparent)
             ) {
@@ -95,7 +97,7 @@ fun AddFriendScreen(onClick: () -> Unit, viewModel: AddFriendViewModel) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Close",
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(25.dp),
                     tint = Color.Black
                 )
             }
@@ -120,13 +122,21 @@ fun UserItem(user: UserX, onInviteClick: () -> Unit,  isInvited: Boolean){
     Box(){
         Row (modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 20.dp), horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically){
+            .padding(start=10.dp, end=10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically){
 
-            Box(Modifier.width(80.dp)){
-                Text(user.name)
+            Row(){
+                AsyncImage(
+                    model = user.avatar,
+                    contentDescription = "Profile picture",
+                    modifier = Modifier
+                        .size(30.dp).padding(end=5.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+                Text(text=user.name, fontSize = 20.sp)
             }
 
-            Spacer(Modifier.width(30.dp))
+            Spacer(Modifier.width(20.dp))
 
             if (isInvited) {
                 Text("Sent", color = MaterialTheme.colorScheme.secondary)

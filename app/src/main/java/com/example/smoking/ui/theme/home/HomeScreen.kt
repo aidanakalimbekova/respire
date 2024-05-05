@@ -255,9 +255,9 @@ fun DashboardCard(viewModel: HomeViewModel) {
                         .height(10.dp)
                         .align(Alignment.CenterHorizontally),
                     color = when {
-                        progress <= 0.3f -> Color.Red // Red for low progress
+                        progress <= 0.3f -> Color.Green // Red for low progress
                         progress <= 0.6f -> Color.Yellow // Yellow for medium progress
-                        else -> Color.Green // Green for high progress
+                        else -> Color.Red // Green for high progress
                     }
                 )
             }
