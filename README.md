@@ -2,6 +2,7 @@
 Comprises three integral components: a backend, a mobile application, and an AI-powered support system, all integrated seamlessly to operate efficiently.
 
 Backend: Utilizes Firebase SDK for data storage and implementation of business logic through Firebase Authentication, Cloud Functions, and Go.
+Here's the backend side of the project, follow for more instructions if necessary: **https://github.com/Brainsoft-Raxat/respire-back**
 
 Mobile App: Developed using Android Kotlin Compose, the front-end facilitates a user-friendly environment where users can track smoking habits, engage in socially collaborative challenges, and receive personalized insights.
 
