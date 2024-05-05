@@ -63,7 +63,7 @@ fun SmokingTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = Color(0XFFCDEFF3).toArgb() // here change the color
+            window.statusBarColor = Color.White.toArgb() // here change the color
             window.navigationBarColor = colorScheme.background.toArgb() // here change the color
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }

@@ -64,7 +64,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -95,7 +97,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.smoking.R
+import com.example.smoking.ui.theme.profile.ErrorScreen
+import com.example.smoking.ui.theme.profile.LoadingScreen
+import com.example.smoking.ui.theme.profile.ProfileContent
+import com.example.smoking.ui.theme.profile.ProfileState
 import com.example.smoking.ui.theme.signin.GoogleAuthUiClient
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.auth.api.identity.Identity
@@ -112,8 +119,8 @@ fun HomeScreen(viewModel: HomeViewModel) {
 
     val currentDate = LocalDate.now()
     val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("E, d MMM"))
-//    val auth = Firebase.auth
-//    val curUser = auth.currentUser
+    val profileState by viewModel.profileState.collectAsStateWithLifecycle()
+
     Column() {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Column(
@@ -138,7 +145,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
                     Row() {
                         Text("Hey, ", fontSize = 25.sp, textAlign = TextAlign.Start)
                         Text(
-                            "Rimma!",
+                            "${profileState.name}!",
                             fontSize = 25.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Start
@@ -279,7 +286,7 @@ fun DashboardCard(viewModel: HomeViewModel) {
         }
 
         if (showBottomSheet.value) {
-            BottomSheet(viewModel)
+            BottomSheet(viewModel, showBottomSheet)
         }
     }
 }
@@ -287,12 +294,12 @@ fun DashboardCard(viewModel: HomeViewModel) {
 //@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(viewModel: HomeViewModel) {
+fun BottomSheet(viewModel: HomeViewModel,  b: MutableState<Boolean>) {
     var sliderPosition by remember { mutableFloatStateOf(0f) }
     val modalBottomSheet = rememberModalBottomSheetState()
     ModalBottomSheet(
         modifier = Modifier.height(600.dp),
-        onDismissRequest = { /*TODO*/ },
+        onDismissRequest = { b.value = false },
         sheetState = modalBottomSheet,
         dragHandle = { BottomSheetDefaults.DragHandle() },
         content = {
@@ -367,33 +374,63 @@ fun BottomSheet(viewModel: HomeViewModel) {
 
 @Composable
 fun CounterCard(viewModel: HomeViewModel) {
-    Box(modifier = Modifier.padding(10.dp))
-    {
-        Box(
-            contentAlignment = Alignment.Center,
+//    var valueCounter by remember {
+//        mutableIntStateOf(0)
+//    }
+//    val valueCounter by viewModel.counterValue.value
+    val valueCounter by viewModel.counterValue.collectAsState()
+
+    Column {
+        Box(modifier = Modifier.padding(10.dp))
+        {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 30.dp)
+            ) {
+
+                CounterButton(value = valueCounter.toString(),
+                    onValueIncreaseClick = {
+                        viewModel.updateCounter(1)
+//                        println(valueCounter)
+//                        viewModel.updateCounterForSelectedDay(valueCounter.plus(1) ?: 0)
+                    },
+
+                    onValueDecreaseClick = {
+                        viewModel.updateCounter(-1)
+//                        viewModel.updateCounterForSelectedDay(maxOf(valueCounter.minus(1) ?: 0, 0))
+                    },
+                    onValueClearClick = {
+//                        valueCounter = 0
+                    }
+                )
+            }
+        }
+
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 30.dp)
+                .height(150.dp),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-//                viewModel.retrieveCounterFromFirestore()
-            var valueCounter by remember {
-                mutableIntStateOf(0)
+            Button(
+                onClick = { viewModel.saveCounterValue() },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Color(0xFF041725),       // цвет текста
+                    containerColor = Color(0xFF93F1F7)
+                )
+            ) {
+                Text(
+                    text = "Update counter",
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(start = 5.dp, end = 5.dp)
+                )
             }
-            CounterButton(value = valueCounter.toString(),
-                onValueIncreaseClick = {
-                    valueCounter += 1
-                    println(valueCounter)
-//                        viewModel.updateCounterForSelectedDay(valueCounter.plus(1) ?: 0)
-                },
-                onValueDecreaseClick = {
-                    valueCounter = maxOf(valueCounter - 1, 0)
-//                        viewModel.updateCounterForSelectedDay(maxOf(valueCounter.minus(1) ?: 0, 0))
-                },
-                onValueClearClick = {
-                    valueCounter = 0
-                })
         }
     }
 }
+
 
 

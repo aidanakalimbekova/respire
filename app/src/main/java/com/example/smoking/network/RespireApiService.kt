@@ -66,6 +66,18 @@ interface RespireApiService {
         @Path("id") id: String
     ): Response<ChallengeX>
 
+    @POST("sessions")
+    suspend fun postSessions(
+        @Body challenge: SessionPut
+    ): Response<Unit>
 
+    @GET("sessions/by_time")
+    suspend fun getSessions(
+        @Query("start") start: String,
+        @Query("end") end: String,
+    ): Response<Int>
+
+    @GET("sessions/stat")
+    suspend fun getStat(): Response<Stat>
 
 }

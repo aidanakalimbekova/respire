@@ -37,7 +37,8 @@ fun CounterButton(
     onValueDecreaseClick: () -> Unit,
     onValueIncreaseClick: () -> Unit,
     onValueClearClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+
 ) {
     Box(
         contentAlignment = Alignment.Center,
