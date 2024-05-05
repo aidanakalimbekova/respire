@@ -131,6 +131,12 @@ fun ErrorView(message: String) {
 }
 @Composable
 fun InvitedChallengeCard(challenge: Challenge, viewModel: LineChartViewModel, navController: NavController) {
+    val originalFormatter = DateTimeFormatter.ISO_DATE_TIME
+    val today = LocalDate.now()
+    val dateTime = ZonedDateTime.parse(challenge.end_date, originalFormatter)
+    val targetDate = dateTime.toLocalDate()
+    val daysBetween = ChronoUnit.DAYS.between(today, targetDate).toInt()
+
     ElevatedCard(modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp),
@@ -141,7 +147,7 @@ fun InvitedChallengeCard(challenge: Challenge, viewModel: LineChartViewModel, na
         elevation = CardDefaults.cardElevation(),
     ) {
         Column(Modifier.padding(top=10.dp,bottom=10.dp,start = 20.dp, end = 20.dp),verticalArrangement = Arrangement.Center) {
-            Text("You've been invited by: ${challenge.owner_id}", style = MaterialTheme.typography.bodyMedium)
+            Text("You've been invited by: ${challenge.owner.username}", style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.padding(5.dp))
             Row(modifier = Modifier
                 .fillMaxWidth(),verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween){
@@ -155,8 +161,8 @@ fun InvitedChallengeCard(challenge: Challenge, viewModel: LineChartViewModel, na
                     tint = Color.White
                 )
                 Column(horizontalAlignment = Alignment.End) {
-                    Text("challenge.title", fontSize = 26.sp, textAlign = TextAlign.End, fontWeight = FontWeight.Bold)
-                    Text("Days left: challenge.daysLeft", textAlign = TextAlign.End)
+                    Text(challenge.name, fontSize = 26.sp, textAlign = TextAlign.End, fontWeight = FontWeight.Bold)
+                    Text("Days left: $daysBetween", textAlign = TextAlign.End)
                 }
             }
             Spacer(modifier = Modifier.padding(5.dp))

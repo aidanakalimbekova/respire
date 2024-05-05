@@ -8,8 +8,16 @@ data class Challenge(
     val invited: List<String>,
     val name: String,
     val owner_id: String,
+    val owner: UserChal,
     val participants: List<String>,
     val penalty: Int,
     val prize: String,
     val type: String
+)
+
+data class UserChal(
+    val id: String,
+    val name: String,
+    val username: String,
+    val avatar: String,
 )
