@@ -308,20 +308,21 @@ fun DashboardCard(viewModel: HomeViewModel, navController: NavController) {
 @Composable
 fun BottomSheet(viewModel: HomeViewModel,  b: MutableState<Boolean>, navController: NavController) {
     var sliderPosition by remember { mutableFloatStateOf(0f) }
-    val modalBottomSheet = rememberModalBottomSheetState()
+    val modalBottomSheet = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var feel by remember {
         mutableStateOf("")
     }
     var context by remember {
         mutableStateOf("")
     }
-    val keyboardController = LocalSoftwareKeyboardController.current
+//    val keyboardController = LocalSoftwareKeyboardController.current
 
 //    val sheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
-        modifier = Modifier.fillMaxHeight(0.9f),
+        modifier = Modifier,
         onDismissRequest = { b.value = false },
+//        windowInsets = WindowInsets(0),
         sheetState = modalBottomSheet,
 //        windowInsets = WindowInsets.ime,
         dragHandle = { BottomSheetDefaults.DragHandle() },
@@ -383,6 +384,7 @@ fun BottomSheet(viewModel: HomeViewModel,  b: MutableState<Boolean>, navControll
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp),
+
                     verticalArrangement = Arrangement.Bottom,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {

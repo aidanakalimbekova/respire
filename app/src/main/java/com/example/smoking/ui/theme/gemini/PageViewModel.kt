@@ -19,15 +19,21 @@ class PageViewModel : ViewModel() {
     private val _rec = MutableStateFlow<List<String>>(listOf())
     val rec = _rec.asStateFlow()
 
-    private suspend fun postRec(craving: Int, mood: String, context: String ) {
+    init {
+        getRec()
+    }
+    private fun getRec() {
         viewModelScope.launch {
             try {
-                val response = apiService.getRecommendations()
+                val response = apiService.getRecommendations(GeminiPut(0, "", ""))
                 if (response.isSuccessful) {
                     println("API success: ${response.body()}")
-                    _rec.value = response.body()?.recommendations!!
+                    _rec.value = response.body()?.reccomendations!!
                 } else {
-                    println("API call failed: ${response.errorBody()}")
+                    val errorMessage = response.errorBody()?.charStream()?.readText()
+                    println("Error: ${response.code()} - $errorMessage")
+
+//                    println("API call failed: ${response.errorBody()}")
                     _rec.value = emptyList()
                 }
             } catch (e: Exception) {

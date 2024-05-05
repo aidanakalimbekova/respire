@@ -17,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.smoking.R
 
 @Composable
-fun PageScreen(navController: NavHostController, pageViewModel: PageViewModel) {
+fun PageScreen(navController: NavHostController, viewModel: PageViewModel) {
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -62,24 +63,26 @@ fun PageScreen(navController: NavHostController, pageViewModel: PageViewModel) {
 //        verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.Start
         ) {
+            val state = viewModel.rec.collectAsState().value
 
             Text("Your daily recommendations", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-            val recommendations = listOf(
-                "Take a short walk outside the office to change the scenery and get some fresh air.",
-                "Instead of smoking, try sipping on a glass of water or chewing on a piece of gum to keep your mouth busy.",
-                "Engage in a quick office-friendly activity like solving a puzzle or reading a short article to keep your mind occupied.",
-                "To improve your mood, listen to your favorite music or a podcast that you enjoy while working.",
-                "Consider setting a mini goal for the day at work to keep yourself motivated and focused, which can also help distract from the craving."
-            )
+//            val recommendations = listOf(
+//                "Take a short walk outside the office to change the scenery and get some fresh air.",
+//                "Instead of smoking, try sipping on a glass of water or chewing on a piece of gum to keep your mouth busy.",
+//                "Engage in a quick office-friendly activity like solving a puzzle or reading a short article to keep your mind occupied.",
+//                "To improve your mood, listen to your favorite music or a podcast that you enjoy while working.",
+//                "Consider setting a mini goal for the day at work to keep yourself motivated and focused, which can also help distract from the craving."
+//            )
+
             LazyColumn{
-                items(recommendations){
+                items(state){
                         recommendation ->
                     Text(
-                        text = recommendation,
+                        text = " - $recommendation",
                         modifier = Modifier.padding(vertical = 8.dp),
-                        fontSize = 25.sp, fontWeight = FontWeight.Medium
+                        fontSize = 25.sp, fontWeight = FontWeight.Normal
                     )
-                    Spacer(modifier = Modifier.safeContentPadding())
+                    Spacer(modifier = Modifier.padding(start = 10.dp))
                 }
             }
      }

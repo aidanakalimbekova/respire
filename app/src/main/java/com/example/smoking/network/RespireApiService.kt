@@ -75,7 +75,7 @@ interface RespireApiService {
     suspend fun getSessions(
         @Query("start") start: String,
         @Query("end") end: String,
-    ): Response<Int>
+    ): Response<Count>
 
     @GET("sessions/stat")
     suspend fun getStat(): Response<Stat>
@@ -83,9 +83,9 @@ interface RespireApiService {
     @POST("ai-assistant/recommendations")
     suspend fun postRecommendations(
         @Body context: GeminiPut
-    ): Response<Unit>
+    ): Response<Recommendations>
 
-    @GET("ai-assistant/recommendations")
-    suspend fun getRecommendations(): Response<Recommendations>
+    @POST("ai-assistant/recommendations")
+    suspend fun getRecommendations( @Body context: GeminiPut): Response<Recommendations>
 
 }

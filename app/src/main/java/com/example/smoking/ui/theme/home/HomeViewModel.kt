@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.smoking.network.GeminiPut
+import com.example.smoking.network.Recommendations
 import com.example.smoking.network.RetrofitClient
 import com.example.smoking.network.SessionPut
 import com.example.smoking.network.User
@@ -60,14 +61,15 @@ class HomeViewModel : ViewModel() {
                 val response = apiService.getSessions(startOfDay, endOfDay)
                 if (response.isSuccessful) {
                     println("API success: ${response.body()}")
-                    _counterValue.value = response.body()!!
+                    val s = response.body()!!.sum
+                    _counterValue.value = s
                 } else {
 //                    _counterValue.value = 0
                     println("API call failed: ${response.errorBody()}")
                 }
 
             } catch (e: Exception) {
-                println(e.message)
+                println("lallalala ${e.message}")
 
             }
         }
@@ -87,7 +89,7 @@ class HomeViewModel : ViewModel() {
                     println("Error search: ${res.code()} - $errorMessage")
                 }
             } catch (e: Exception) {
-                println(e.message)
+                println("lalla ${e.message}")
             }
         }
     }
@@ -108,7 +110,7 @@ class HomeViewModel : ViewModel() {
 
                 }
             } catch (e: Exception) {
-                println(e.message)
+                println("here we go aia ${e.message}")
                 _profileState.value = Profile("", "", "")
             }
         }
@@ -125,7 +127,7 @@ class HomeViewModel : ViewModel() {
                     userProfile.avatar,
                 )
             } catch (e: Exception) {
-                println(e.message)
+                println("im a smarter baby ${e.message}")
                 _profileState.value = Profile("", "", "")
             }
         }
